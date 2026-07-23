@@ -1,0 +1,23 @@
+// Lista oficial de departamentos administrativos del Portal GA COLD Mexico.
+export const DEPARTMENTS = [
+  "Calidad",
+  "Control Interno",
+  "Direct Procurement",
+  "EHS",
+  "Finanzas",
+  "Import & Export",
+  "Indirect Logistics Procurement",
+  "Indirect Procurement",
+  "Indirect Services Procurement",
+  "Ingeniería",
+  "IT",
+  "Legal",
+  "Logística Interna",
+  "Order Management",
+  "Patrimonial",
+  "Payroll",
+  "Producción",
+  "Recursos Humanos",
+  "S&OE",
+  "Trade Compliance",
+]

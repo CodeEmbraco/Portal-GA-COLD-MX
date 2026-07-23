@@ -1,0 +1,209 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  height: var(--header-h);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Marca */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.brand-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--gray-300);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.15;
+}
+
+.brand-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--gray-500);
+  letter-spacing: 0.02em;
+}
+
+/* Enlaces */
+.nav-links {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  margin-left: auto;
+  height: 100%;
+  overflow: hidden;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 6px 12px;
+  color: var(--gray-700);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.nav-link-icon {
+  display: flex;
+  color: var(--gray-500);
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--nidec-green-dark);
+  background: var(--gray-50);
+}
+
+.nav-link:hover .nav-link-icon {
+  color: var(--nidec-green);
+}
+
+.nav-link.is-active {
+  color: var(--nidec-green-dark);
+  border-bottom-color: var(--nidec-green);
+}
+
+.nav-link.is-active .nav-link-icon {
+  color: var(--nidec-green);
+}
+
+.nav-link-label {
+  white-space: nowrap;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gray-700);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--gray-100);
+  color: var(--nidec-green-dark);
+}
+
+/* Menú móvil */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 42px;
+  height: 40px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--white);
+}
+
+.menu-toggle span {
+  height: 2px;
+  width: 20px;
+  margin: 0 auto;
+  background: var(--gray-700);
+  border-radius: 2px;
+}
+
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  padding: 8px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--white);
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  color: var(--gray-700);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.mobile-link.is-active,
+.mobile-link:hover {
+  background: var(--nidec-green-soft);
+  color: var(--nidec-green-darker);
+}
+
+/* Responsivo */
+@media (max-width: 1080px) {
+  .nav-links {
+    display: none;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+  .mobile-nav {
+    display: flex;
+  }
+}
+
+@media (max-width: 520px) {
+  .brand-text {
+    display: none;
+  }
+  .brand-divider {
+    display: none;
+  }
+}

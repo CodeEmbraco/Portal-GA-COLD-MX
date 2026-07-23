@@ -1,0 +1,176 @@
+/* =========================================================
+   Portal GA COLD Mexico - Estilos globales / tokens de marca
+   Paleta oficial Nidec: Verde, Blanco, Negro, acentos Gris
+   ========================================================= */
+
+:root {
+  /* Marca */
+  --nidec-green: #00983a;
+  --nidec-green-dark: #00762c;
+  --nidec-green-darker: #005a22;
+  --nidec-green-soft: #e6f4ec;
+  --nidec-green-soft-2: #d3ebdd;
+
+  /* Neutros */
+  --black: #14171a;
+  --ink: #1f2529;
+  --gray-900: #23292e;
+  --gray-700: #4a5560;
+  --gray-500: #6b7680;
+  --gray-400: #98a1aa;
+  --gray-300: #cdd4da;
+  --gray-200: #e4e8ec;
+  --gray-100: #f1f4f6;
+  --gray-50: #f7f9fa;
+  --white: #ffffff;
+
+  /* Estado */
+  --danger: #c62828;
+  --danger-soft: #fdecec;
+  --warning: #b26a00;
+
+  /* Sistema */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(20, 23, 26, 0.06), 0 1px 3px rgba(20, 23, 26, 0.05);
+  --shadow-md: 0 4px 14px rgba(20, 23, 26, 0.08);
+  --shadow-lg: 0 12px 34px rgba(20, 23, 26, 0.14);
+  --header-h: 66px;
+
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--gray-100);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 26px 22px 60px;
+}
+
+/* Utilidad de accesibilidad */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Botones base reutilizables */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.05s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--nidec-green);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--nidec-green-dark);
+}
+
+.btn-outline {
+  background: var(--white);
+  border-color: var(--gray-300);
+  color: var(--gray-700);
+}
+
+.btn-outline:hover {
+  border-color: var(--nidec-green);
+  color: var(--nidec-green-dark);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--gray-700);
+}
+
+.btn-ghost:hover {
+  background: var(--gray-100);
+}
+
+.btn-danger {
+  background: var(--white);
+  border-color: var(--gray-300);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--nidec-green-soft);
+  color: var(--nidec-green-darker);
+  border: 1px solid var(--nidec-green-soft-2);
+}

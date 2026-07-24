@@ -89,7 +89,7 @@ CREATE TABLE Versiones_Archivo(
 );
 
 /*
-
+COMENATRIO DE PRUEBA
 NOTAS:
 	--> Estamos guardando la ruta 2 veces: Politica y Archivo. ¿Donde la dejamos para no repetir el dato?
 	-

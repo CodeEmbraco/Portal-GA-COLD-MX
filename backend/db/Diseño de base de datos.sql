@@ -50,8 +50,6 @@ CREATE TABLE Politica(
 	Id				INT PRIMARY KEY IDENTITY(1,1),
 	Titulo			VARCHAR(255) NOT NULL,
 	DepartamentoId	INT NOT NULL,
-	P_Version		VARCHAR(10) NOT NULL,
-	--Ruta			VARCHAR (255) NOT NULL, -- HAY QUE DECIDIR SI ES UN ARCHIVO POR POLITICA O VARIOS!
 	SubidoPor		INT NOT NULL,
 	FechaSubida		DATETIME2 NOT NULL,
 	ModificadoPor	INT NOT NULL,
@@ -64,14 +62,30 @@ CREATE TABLE Politica(
 CREATE TABLE Archivo(
 	Id	INT PRIMARY KEY IDENTITY(1,1),
 	Codigo VARCHAR(20) NOT NULL,
-	Ruta VARCHAR(255) NOT NULL,
+	PoliticaId INT NOT NULL,
 	SubidoPor		INT NOT NULL,
 	FechaSubida		DATETIME2 NOT NULL,
 	ModificadoPor	INT NOT NULL,
 	FechaModificado	DATETIME NOT NULL,
 	CONSTRAINT unique_codigo UNIQUE (Codigo),
+	CONSTRAINT fk_id_politica FOREIGN KEY (PoliticaId) REFERENCES Politica(Id),
 	CONSTRAINT fk_archivo_usuario_subio FOREIGN KEY (SubidoPor) REFERENCES Usuario(Id),
 	CONSTRAINT fk_archivo_usuario_modif FOREIGN KEY (ModificadoPor) REFERENCES Usuario(Id)
+);
+
+CREATE TABLE Versiones_Archivo(
+	Id	INT PRIMARY KEY IDENTITY(1,1),
+	ArchivoId INT NOT NULL,
+	Ruta VARCHAR(200) NOT NULL,
+	Version_ INT NOT NULL,
+	Active BOOLEAN NOT NULL,
+	SubidoPor		INT NOT NULL,
+	FechaSubida		DATETIME2 NOT NULL,
+	ModificadoPor	INT NOT NULL,
+	FechaModificado	DATETIME NOT NULL,
+	CONSTRAINT fk_id_archivo FOREIGN KEY (ArchivoId) REFERENCES Archivo(Id),
+	CONSTRAINT fk_version_archivo_usuario_subio FOREIGN KEY (SubidoPor) REFERENCES Usuario(Id),
+	CONSTRAINT fk_version_archivo_usuario_modif FOREIGN KEY (ModificadoPor) REFERENCES Usuario(Id)
 );
 
 /*

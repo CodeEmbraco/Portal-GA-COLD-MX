@@ -1,0 +1,10 @@
+#modulos de node se descargan mediante npm install para evitar subirlo al repositorio
+node_modules
+# Keep environment variables out of version control
+.env
+
+#Se genera solo cada que se corre el proyecto
+/src/generated/prisma
+
+#Comilados de typescript
+dist/

@@ -3,6 +3,7 @@ import { Usuario, Rol, Departamento, Entidad, Politica,Archivo,VersionArchivo } 
 export const rolesDummy: Rol[] =[
     { id: 1, rol: 'Admin', descripcion: 'Administrador del sistema' },
     { id: 2, rol: 'Auditor', descripcion: 'Solo lectura y revisión' },
+    { id: 3, rol: 'SuperAdmin', descripcion: 'SuperAdmin' },
 ];
 
 export const entidadesDummy: Entidad[] = [
@@ -67,6 +68,7 @@ export const politicasDummy: Politica[] = [
     fechaSubida: new Date(),
     modificadoPor: 1,
     fechaModificado: new Date(),
+    esPrivado: true
   },
 ];
 

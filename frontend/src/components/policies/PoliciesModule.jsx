@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { DEPARTMENTS } from "../../test/departments.js"
+
 import {
   IconPlus,
   IconSearch,
@@ -15,6 +15,10 @@ import ConfirmDialog from "./ConfirmDialog.jsx"
 import PolicyTable from "./PolicyTable.jsx"
 import PolicyCards from "./PolicyCards.jsx"
 import "./policies.css"
+
+//Mock Data
+import { DEPARTMENTS } from "../../test/departments.js"
+import { MOCK_USERS } from "../../test/mockUsers.js"
 
 export default function PoliciesModule({
   policies,

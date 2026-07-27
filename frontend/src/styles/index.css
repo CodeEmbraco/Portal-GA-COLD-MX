@@ -28,6 +28,8 @@
   --danger: #c62828;
   --danger-soft: #fdecec;
   --warning: #b26a00;
+  --login: #03d348;
+  --login-dark: #3a8d02;
 
   /* Sistema */
   --radius: 12px;
@@ -109,7 +111,7 @@ a {
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  /* gap: 8px; */
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   padding: 10px 16px;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { DEPARTMENTS } from "../../data/departments.js"
+import { DEPARTMENTS } from "../../test/departments.js"
 import {
   IconPlus,
   IconSearch,
@@ -7,6 +7,7 @@ import {
   IconGrid,
   IconArrowLeft,
   IconDocument,
+  IconLock,
 } from "../Icons.jsx"
 import LoginModal from "./LoginModal.jsx"
 import PolicyFormModal from "./PolicyFormModal.jsx"
@@ -14,25 +15,6 @@ import ConfirmDialog from "./ConfirmDialog.jsx"
 import PolicyTable from "./PolicyTable.jsx"
 import PolicyCards from "./PolicyCards.jsx"
 import "./policies.css"
-
-// Ícono simple de Chevron para colapsar/desplegar
-function IconChevronDown({ size = 18, style }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={style}
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  )
-}
 
 export default function PoliciesModule({
   policies,
@@ -45,9 +27,6 @@ export default function PoliciesModule({
   const [selectedDept, setSelectedDept] = useState(null)
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
-  
-  // Estado para mostrar/ocultar el listado de políticas
-  const [isExpanded, setIsExpanded] = useState(true)
 
   // Control de modales
   const [showLogin, setShowLogin] = useState(false)
@@ -95,33 +74,6 @@ export default function PoliciesModule({
     }
   }
 
-  // Lógica de descarga/visualización condicional según si es pública o privada
-  const executeDownload = (policy) => {
-    // Simulación de descarga del archivo
-    const fileUrl = policy.fileUrl || "#"
-    const link = document.createElement("a")
-    link.href = fileUrl
-    link.download = policy.fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    // Si no hay URL real implementada aún, mostramos una alerta informativa
-    if (!policy.fileUrl) {
-      alert(`Descargando/Abriendo documento: ${policy.fileName}`)
-    }
-  }
-
-  const handleDownload = (policy) => {
-    if (policy.isPrivate) {
-      // Si es privada, requiere autenticación
-      requireAuth(() => executeDownload(policy))
-    } else {
-      // Si es pública, se descarga/visualiza directamente
-      executeDownload(policy)
-    }
-  }
-
   const openCreate = () =>
     requireAuth(() => setFormState({ mode: "create", policy: null }))
 
@@ -160,33 +112,38 @@ export default function PoliciesModule({
             normativos de GA COLD Mexico.
           </p>
         </div>
-        <button className="btn btn-primary btn-new" onClick={openCreate}>
-          <IconPlus size={18} /> Nueva política
-        </button>
       </div>
 
       {/* Selección por departamentos */}
       <section className="dept-section" aria-label="Departamentos">
+        <h2 className="section-label">Departamentos</h2>
         <div className="dept-section-header">
-          <h2 className="section-label">Departamentos</h2>
-          {selectedDept && (
-            <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
-              <IconArrowLeft size={16} /> Ver todos
-            </button>
-          )}
-        </div>
-        <div className="dept-grid">
-          {DEPARTMENTS.map((dep) => (
-            <button
-              key={dep}
-              className={`dept-chip ${selectedDept === dep ? "is-active" : ""}`}
-              onClick={() => setSelectedDept((cur) => (cur === dep ? null : dep))}
-              aria-pressed={selectedDept === dep}
+          <div className="dept-filter">
+            <select
+              className={`dept-chip`}
+              onChange={(e) => setSelectedDept(e.target.value)}
             >
-              <span className="dept-name">{dep}</span>
-              <span className="dept-count">{countsByDept[dep] || 0}</span>
+              <option value={null}>Seleccionar departamento</option>
+              {DEPARTMENTS.map((dep) => (
+                <option key={dep} value={dep} className={` ${selectedDept === dep ? "is-active" : ""}`}>
+                  {dep} ({countsByDept[dep] || 0})
+                </option>
+              ))}
+            </select>
+            {selectedDept && (
+              <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
+                <IconArrowLeft size={16} /> Ver todos
+              </button>
+            )}
+          </div>
+          <div className="dept-section-actions">
+            <button className="btn-lock" onClick={() => requireAuth(() => { })}>
+              <IconLock size={22} />
             </button>
-          ))}
+            <button className="btn btn-primary btn-new" onClick={openCreate}>
+              <IconPlus size={18} /> Nueva política
+            </button>
+          </div>
         </div>
       </section>
 
@@ -212,38 +169,6 @@ export default function PoliciesModule({
           </span>
         </div>
 
-        {/* Botón central para Ocultar / Mostrar la información */}
-        <div className="toolbar-center">
-          <button
-            type="button"
-            className="btn btn-ghost toggle-expand-btn"
-            onClick={() => setIsExpanded((prev) => !prev)}
-            title={isExpanded ? "Ocultar políticas" : "Mostrar políticas"}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "6px 14px",
-              borderRadius: "20px",
-              border: "1px solid #e2e8f0",
-              backgroundColor: "#f8fafc",
-              fontSize: "0.85rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-          >
-            <span>{isExpanded ? "Ocultar políticas" : "Mostrar políticas"}</span>
-            <IconChevronDown
-              size={18}
-              style={{
-                transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.2s ease",
-              }}
-            />
-          </button>
-        </div>
-
         <div className="view-toggle" role="group" aria-label="Cambiar vista">
           <button
             className={`view-btn ${viewMode === "table" ? "is-active" : ""}`}
@@ -262,8 +187,7 @@ export default function PoliciesModule({
         </div>
       </section>
 
-      {/* Listado condicional */}
-      {isExpanded && (
+      {(
         <>
           {filtered.length === 0 ? (
             <div className="empty-state">
@@ -281,19 +205,9 @@ export default function PoliciesModule({
               </button>
             </div>
           ) : viewMode === "table" ? (
-            <PolicyTable
-              policies={filtered}
-              onEdit={openEdit}
-              onDelete={askDelete}
-              onDownload={handleDownload}
-            />
+            <PolicyTable policies={filtered} onEdit={openEdit} onDelete={askDelete} />
           ) : (
-            <PolicyCards
-              policies={filtered}
-              onEdit={openEdit}
-              onDelete={askDelete}
-              onDownload={handleDownload}
-            />
+            <PolicyCards policies={filtered} onEdit={openEdit} onDelete={askDelete} />
           )}
         </>
       )}

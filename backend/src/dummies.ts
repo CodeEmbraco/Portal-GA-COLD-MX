@@ -24,17 +24,39 @@ export const usuariosDummy: Usuario[] = [
   {
     id: 1,
     correo: 'admin@empresa.com',
-    contraseña: 'hashed_password_123',
-    usuarioActiveDirectory: 'CORP\\admin_user',
+    contraseña: '123',
+    usuarioActiveDirectory: 'admin_user',
   },
   {
     id: 2,
     correo: 'juan.perez@empresa.com',
-    contraseña: 'hashed_password_456',
-    usuarioActiveDirectory: 'CORP\\jperez',
+    contraseña: '456',
+    usuarioActiveDirectory: 'jperez',
   },
 ];
 
+
+// 1. Declaramos interfaces simples para las tablas de cruce
+export interface UsuarioRolDummy {
+  usuarioId: number;
+  rolId: number;
+}
+
+export interface UsuarioDepartamentoDummy {
+  usuarioId: number;
+  departamentoId: number;
+}
+
+// 2. Llenamos las relaciones
+export const usuarioRolesDummy: UsuarioRolDummy[] = [
+  { usuarioId: 1, rolId: 1 }, // El Admin (1) tiene el rol de Administrador (1)
+  { usuarioId: 2, rolId: 2 }, // Juan Perez (2) tiene el rol de Auditor (2)
+];
+
+export const usuarioDepartamentosDummy: UsuarioDepartamentoDummy[] = [
+  { usuarioId: 1, departamentoId: 2 }, // El Admin (1) está en IT (2)
+  { usuarioId: 2, departamentoId: 1 }, // Juan Perez (2) está en RH (1)
+];
 
 export const politicasDummy: Politica[] = [
   {

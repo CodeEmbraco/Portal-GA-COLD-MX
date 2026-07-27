@@ -42,7 +42,7 @@ export default function Navbar({ activeTab, onNavigate }) {
           <span className="brand-divider" aria-hidden="true" />
           <span className="brand-text">
             <span className="brand-title">GA COLD Mexico</span>
-            <span className="brand-sub">Administrative Portal</span>
+            <span className="brand-sub">Portal</span>
           </span>
         </button>
 

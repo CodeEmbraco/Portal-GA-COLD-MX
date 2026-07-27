@@ -1,5 +1,5 @@
-// Datos simulados (mock) que representan politicas ya cargadas en el portal.
-// En un entorno real provendrian de un backend; aqui viven en estado local.
+// Datos simulados (mock) que representan políticas ya cargadas en el portal.
+// En un entorno real provendrían de un backend; aquí viven en estado local.
 export const INITIAL_POLICIES = [
   {
     id: "pol-001",
@@ -8,6 +8,7 @@ export const INITIAL_POLICIES = [
     version: "3.2",
     date: "2025-11-04",
     fileName: "QA-Control-Producto-Terminado-v3.2.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-002",
@@ -16,6 +17,7 @@ export const INITIAL_POLICIES = [
     version: "1.4",
     date: "2025-09-18",
     fileName: "CI-Auditoria-Interna-v1.4.docx",
+    isPrivate: true,
   },
   {
     id: "pol-003",
@@ -24,6 +26,7 @@ export const INITIAL_POLICIES = [
     version: "2.0",
     date: "2026-01-12",
     fileName: "DP-Compras-Directas-v2.0.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-004",
@@ -32,6 +35,7 @@ export const INITIAL_POLICIES = [
     version: "5.1",
     date: "2025-12-02",
     fileName: "EHS-Reglamento-General-v5.1.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-005",
@@ -40,6 +44,7 @@ export const INITIAL_POLICIES = [
     version: "4.0",
     date: "2026-02-28",
     fileName: "FIN-Cierre-Contable-v4.0.xlsx",
+    isPrivate: true,
   },
   {
     id: "pol-006",
@@ -48,6 +53,7 @@ export const INITIAL_POLICIES = [
     version: "2.3",
     date: "2025-10-21",
     fileName: "IE-IMMEX-Importacion-Temporal-v2.3.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-007",
@@ -56,6 +62,7 @@ export const INITIAL_POLICIES = [
     version: "1.9",
     date: "2026-03-05",
     fileName: "IT-Uso-Aceptable-v1.9.pdf",
+    isPrivate: true,
   },
   {
     id: "pol-008",
@@ -64,6 +71,7 @@ export const INITIAL_POLICIES = [
     version: "6.0",
     date: "2025-08-30",
     fileName: "LEG-Codigo-Conducta-v6.0.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-009",
@@ -72,6 +80,7 @@ export const INITIAL_POLICIES = [
     version: "3.7",
     date: "2026-01-31",
     fileName: "PAY-Nomina-Timbrado-v3.7.docx",
+    isPrivate: true,
   },
   {
     id: "pol-010",
@@ -80,6 +89,7 @@ export const INITIAL_POLICIES = [
     version: "2.5",
     date: "2025-11-19",
     fileName: "PROD-Control-Linea-v2.5.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-011",
@@ -88,6 +98,7 @@ export const INITIAL_POLICIES = [
     version: "4.2",
     date: "2026-02-10",
     fileName: "RH-Reclutamiento-Seleccion-v4.2.pdf",
+    isPrivate: false,
   },
   {
     id: "pol-012",
@@ -96,5 +107,6 @@ export const INITIAL_POLICIES = [
     version: "1.1",
     date: "2025-12-15",
     fileName: "TC-Clasificacion-Arancelaria-v1.1.pdf",
+    isPrivate: true,
   },
 ]

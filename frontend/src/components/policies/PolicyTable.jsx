@@ -8,7 +8,7 @@ function formatDate(iso) {
 }
 
 // Vista de tabla para listar políticas.
-export default function PolicyTable({ policies, onEdit, onDelete }) {
+export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) {
   return (
     <div className="table-wrap">
       <table className="policy-table">
@@ -16,6 +16,7 @@ export default function PolicyTable({ policies, onEdit, onDelete }) {
           <tr>
             <th scope="col">Política</th>
             <th scope="col">Departamento</th>
+            <th scope="col">Acceso</th>
             <th scope="col">Versión</th>
             <th scope="col">Fecha</th>
             <th scope="col">Archivo</th>
@@ -31,13 +32,30 @@ export default function PolicyTable({ policies, onEdit, onDelete }) {
               <td>
                 <span className="badge">{p.department}</span>
               </td>
+              <td>
+                <span className={`badge ${p.isPrivate ? "badge-private" : "badge-public"}`}>
+                  {p.isPrivate ? "🔒 Privada" : "🌐 Pública"}
+                </span>
+              </td>
               <td className="cell-version">v{p.version}</td>
               <td className="cell-muted">{formatDate(p.date)}</td>
               <td>
-                <span className="file-pill">
+                <button
+                  type="button"
+                  className="file-pill"
+                  onClick={() => onDownload(p)}
+                  title={p.isPrivate ? "Requiere inicio de sesión" : "Descargar documento"}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                >
                   <IconFile size={15} />
                   <span className="file-pill-name">{p.fileName}</span>
-                </span>
+                </button>
               </td>
               <td className="col-actions">
                 <div className="row-actions">

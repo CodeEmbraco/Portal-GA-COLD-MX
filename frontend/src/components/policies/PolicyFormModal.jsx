@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { DEPARTMENTS } from "../../data/departments.js"
 import { IconClose, IconFile } from "../Icons.jsx"
 
-// Modal de formulario para crear o editar una politica.
+// Modal de formulario para crear o editar una política.
 // Recibe `policy` cuando se edita; null cuando se crea.
 export default function PolicyFormModal({ policy, defaultDepartment, onClose, onSave }) {
   const isEditing = Boolean(policy)
@@ -14,6 +14,7 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
     department: policy?.department ?? defaultDepartment ?? "",
     version: policy?.version ?? "",
     fileName: policy?.fileName ?? "",
+    isPrivate: policy?.isPrivate ?? false,
   })
   const [errors, setErrors] = useState({})
 
@@ -52,6 +53,7 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
       department: form.department,
       version: form.version.trim(),
       fileName: form.fileName.trim(),
+      isPrivate: form.isPrivate,
     })
   }
 
@@ -121,22 +123,36 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
             </label>
           </div>
 
-          <label className="field">
-            <span className="field-label">Departamento</span>
-            <select
-              className={`field-input ${errors.department ? "is-invalid" : ""}`}
-              value={form.department}
-              onChange={(e) => update("department", e.target.value)}
-            >
-              <option value="">Selecciona un departamento…</option>
-              {DEPARTMENTS.map((dep) => (
-                <option key={dep} value={dep}>
-                  {dep}
-                </option>
-              ))}
-            </select>
-            {errors.department && <span className="field-error">{errors.department}</span>}
-          </label>
+          <div className="field-row">
+            <label className="field">
+              <span className="field-label">Departamento</span>
+              <select
+                className={`field-input ${errors.department ? "is-invalid" : ""}`}
+                value={form.department}
+                onChange={(e) => update("department", e.target.value)}
+              >
+                <option value="">Selecciona un departamento…</option>
+                {DEPARTMENTS.map((dep) => (
+                  <option key={dep} value={dep}>
+                    {dep}
+                  </option>
+                ))}
+              </select>
+              {errors.department && <span className="field-error">{errors.department}</span>}
+            </label>
+
+            <label className="field">
+              <span className="field-label">Visibilidad / Acceso</span>
+              <select
+                className="field-input"
+                value={form.isPrivate ? "private" : "public"}
+                onChange={(e) => update("isPrivate", e.target.value === "private")}
+              >
+                <option value="public">🌐 Pública (Acceso libre)</option>
+                <option value="private">🔒 Privada (Personal autorizado)</option>
+              </select>
+            </label>
+          </div>
 
           <div className="field">
             <span className="field-label">Adjuntar archivo (PDF, DOCX, XLSX…)</span>

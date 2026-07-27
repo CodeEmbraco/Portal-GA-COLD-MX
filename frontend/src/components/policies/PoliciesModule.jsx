@@ -15,7 +15,7 @@ import PolicyTable from "./PolicyTable.jsx"
 import PolicyCards from "./PolicyCards.jsx"
 import "./policies.css"
 
-// Ícono simple de Chevron para colapsar/desplegar si no está en Icons.jsx
+// Ícono simple de Chevron para colapsar/desplegar
 function IconChevronDown({ size = 18, style }) {
   return (
     <svg
@@ -46,7 +46,7 @@ export default function PoliciesModule({
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
   
-  // Nuevo estado para mostrar/ocultar el listado de políticas
+  // Estado para mostrar/ocultar el listado de políticas
   const [isExpanded, setIsExpanded] = useState(true)
 
   // Control de modales
@@ -92,6 +92,33 @@ export default function PoliciesModule({
     if (pendingAction) {
       pendingAction()
       setPendingAction(null)
+    }
+  }
+
+  // Lógica de descarga/visualización condicional según si es pública o privada
+  const executeDownload = (policy) => {
+    // Simulación de descarga del archivo
+    const fileUrl = policy.fileUrl || "#"
+    const link = document.createElement("a")
+    link.href = fileUrl
+    link.download = policy.fileName
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+    // Si no hay URL real implementada aún, mostramos una alerta informativa
+    if (!policy.fileUrl) {
+      alert(`Descargando/Abriendo documento: ${policy.fileName}`)
+    }
+  }
+
+  const handleDownload = (policy) => {
+    if (policy.isPrivate) {
+      // Si es privada, requiere autenticación
+      requireAuth(() => executeDownload(policy))
+    } else {
+      // Si es pública, se descarga/visualiza directamente
+      executeDownload(policy)
     }
   }
 
@@ -235,7 +262,7 @@ export default function PoliciesModule({
         </div>
       </section>
 
-      {/* Listado condicional (Se muestra solo si isExpanded === true) */}
+      {/* Listado condicional */}
       {isExpanded && (
         <>
           {filtered.length === 0 ? (
@@ -254,9 +281,19 @@ export default function PoliciesModule({
               </button>
             </div>
           ) : viewMode === "table" ? (
-            <PolicyTable policies={filtered} onEdit={openEdit} onDelete={askDelete} />
+            <PolicyTable
+              policies={filtered}
+              onEdit={openEdit}
+              onDelete={askDelete}
+              onDownload={handleDownload}
+            />
           ) : (
-            <PolicyCards policies={filtered} onEdit={openEdit} onDelete={askDelete} />
+            <PolicyCards
+              policies={filtered}
+              onEdit={openEdit}
+              onDelete={askDelete}
+              onDownload={handleDownload}
+            />
           )}
         </>
       )}

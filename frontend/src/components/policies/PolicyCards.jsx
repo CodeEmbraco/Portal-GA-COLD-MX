@@ -13,7 +13,7 @@ function fileType(name) {
 }
 
 // Vista de tarjetas para listar políticas.
-export default function PolicyCards({ policies, onEdit, onDelete }) {
+export default function PolicyCards({ policies, onEdit, onDelete, onDownload }) {
   return (
     <div className="cards-grid">
       {policies.map((p) => (
@@ -23,7 +23,12 @@ export default function PolicyCards({ policies, onEdit, onDelete }) {
               <IconFile size={20} />
               <span className="file-type-ext">{fileType(p.fileName)}</span>
             </span>
-            <span className="badge">{p.department}</span>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <span className={`badge ${p.isPrivate ? "badge-private" : "badge-public"}`}>
+                {p.isPrivate ? "🔒 Privada" : "🌐 Pública"}
+              </span>
+              <span className="badge">{p.department}</span>
+            </div>
           </div>
 
           <h3 className="policy-card-title">{p.title}</h3>
@@ -35,7 +40,12 @@ export default function PolicyCards({ policies, onEdit, onDelete }) {
             <span className="meta-item meta-version">v{p.version}</span>
           </div>
 
-          <p className="policy-card-file" title={p.fileName}>
+          <p
+            className="policy-card-file"
+            title={p.fileName}
+            onClick={() => onDownload(p)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
             {p.fileName}
           </p>
 

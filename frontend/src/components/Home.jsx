@@ -29,13 +29,13 @@ export default function Home({ onNavigate }) {
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-content">
           <h1 id="hero-title" className="hero-title text-balance">
-            GA COLD MEXICO
+            NIDEC GA COLD MEXICO
             <br />
-            ADMINISTRATIVE PORTAL
+            PORTAL
           </h1>
           <span className="hero-rule" aria-hidden="true" />
           <p className="hero-desc text-pretty">
-            Punto único de acceso para el equipo administrativo de GA COLD Mexico: personas,
+            Punto único de acceso para el equipo de GA COLD Mexico: personas,
             indicadores, workstreams y la gestión centralizada de políticas y procedimientos.
           </p>
         </div>

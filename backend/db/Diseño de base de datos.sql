@@ -1,12 +1,12 @@
-CREATE DATABASE APP_WEB_PORTAL;
+--CREATE DATABASE APP_WEB_PORTAL;
 USE APP_WEB_PORTAL;
 
 CREATE TABLE Entidad(
-	Id	INT PRIMARY KEY IDENTITY(1,1),
-	Planta VARCHAR(100) NOT NULL,
-	Pais	VARCHAR(50) NOT NULL,
-	Estado	VARCHAR(50) NOT NULL,
-	Direccion VARCHAR(100) NOT NULL
+	Id			INT PRIMARY KEY IDENTITY(1,1),
+	Planta		VARCHAR(100) NOT NULL,
+	Pais		VARCHAR(50) NOT NULL,
+	Estado		VARCHAR(50) NOT NULL,
+	Direccion	VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Departamento(
@@ -18,14 +18,14 @@ CREATE TABLE Departamento(
 );
 
 CREATE TABLE Rol(
-	Id	INT PRIMARY KEY IDENTITY(1,1),
-	Rol VARCHAR(50) NOT NULL,
+	Id			INT PRIMARY KEY IDENTITY(1,1),
+	Rol			VARCHAR(50) NOT NULL,
 	Descripcion VARCHAR(100) NOT NULL
 )
 
 CREATE TABLE Usuario(
-	Id	INT PRIMARY KEY IDENTITY(1,1),
-	Correo VARCHAR(50) NOT NULL,
+	Id			INT PRIMARY KEY IDENTITY(1,1),
+	Correo		VARCHAR(50) NOT NULL,
 	Contraseña	VARCHAR(260) NOT NULL,
 	Usuario_ActiveDirectory VARCHAR(100) NOT NULL
 );
@@ -43,7 +43,7 @@ CREATE TABLE Departamento_Usuario(
 	IdUsuario		INT NOT NULL,
 	CONSTRAINT pk_depto_usuario PRIMARY KEY (IdDepartamento,IdUsuario),	--Llave primaria compuesta
 	CONSTRAINT fk_depto_asoc FOREIGN KEY (IdDepartamento) REFERENCES Departamento(Id),
-	CONSTRAINT fk_usuario_asoc FOREIGN KEY (IdUsuario) REFERENCES Usuario(Id),
+	CONSTRAINT fk_depto_usuario_asoc FOREIGN KEY (IdUsuario) REFERENCES Usuario(Id),
 )
 
 CREATE TABLE Politica(
@@ -60,9 +60,9 @@ CREATE TABLE Politica(
 );
 
 CREATE TABLE Archivo(
-	Id	INT PRIMARY KEY IDENTITY(1,1),
-	Codigo VARCHAR(20) NOT NULL,
-	PoliticaId INT NOT NULL,
+	Id				INT PRIMARY KEY IDENTITY(1,1),
+	Codigo			VARCHAR(20) NOT NULL,
+	PoliticaId		INT NOT NULL,
 	SubidoPor		INT NOT NULL,
 	FechaSubida		DATETIME2 NOT NULL,
 	ModificadoPor	INT NOT NULL,
@@ -74,11 +74,11 @@ CREATE TABLE Archivo(
 );
 
 CREATE TABLE Versiones_Archivo(
-	Id	INT PRIMARY KEY IDENTITY(1,1),
-	ArchivoId INT NOT NULL,
-	Ruta VARCHAR(200) NOT NULL,
-	Version_ INT NOT NULL,
-	Active BOOLEAN NOT NULL,
+	Id				INT PRIMARY KEY IDENTITY(1,1),
+	ArchivoId		INT NOT NULL,
+	Ruta			VARCHAR(200) NOT NULL,
+	Version_		INT NOT NULL,
+	Active			BIT NOT NULL DEFAULT 1,
 	SubidoPor		INT NOT NULL,
 	FechaSubida		DATETIME2 NOT NULL,
 	ModificadoPor	INT NOT NULL,
@@ -88,11 +88,4 @@ CREATE TABLE Versiones_Archivo(
 	CONSTRAINT fk_version_archivo_usuario_modif FOREIGN KEY (ModificadoPor) REFERENCES Usuario(Id)
 );
 
-/*
-COMENATRIO DE PRUEBA
-NOTAS:
-	--> Estamos guardando la ruta 2 veces: Politica y Archivo. ¿Donde la dejamos para no repetir el dato?
-	-
-
-*/
-
+SELECT *  FROM Politica;

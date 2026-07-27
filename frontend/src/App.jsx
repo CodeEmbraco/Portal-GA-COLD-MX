@@ -4,7 +4,7 @@ import Home from "./components/Home.jsx"
 import PoliciesModule from "./components/policies/PoliciesModule.jsx"
 import Placeholder from "./components/Placeholder.jsx"
 import Footer from "./components/Footer.jsx"
-import { INITIAL_POLICIES } from "./data/mockPolicies.js"
+import { INITIAL_POLICIES } from "./test/mockPolicies.js"
 
 // Genera un id unico simple para nuevas politicas.
 const newId = () => `pol-${Date.now()}-${Math.floor(Math.random() * 1000)}`

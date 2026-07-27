@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { DEPARTMENTS } from "../../data/departments.js"
+import { DEPARTMENTS } from "../../test/departments.js"
 import { IconClose, IconFile } from "../Icons.jsx"
 
 // Modal de formulario para crear o editar una política.

@@ -1,16 +1,12 @@
-import axios from 'axios';
+import api from "@config/api.js";
 
-const api = axios.create({
-    baseURL: import.meta.env.BACKEND_URL || 'http:\\localhost:3001',
-    headers: { 'Content-Type': 'application/json' }
-})
-
-//Entidades
+//Modulo de Usuarios
 const usuarioService = {
-    authenticate_user: async (login) => {
-        const response = await api.post(`/user/authenticate`, login);
+    autenticarUsuario: async (login) => {
+        const response = await api.post(`/api/auth/login`, login);
         return response.data;
     },
+
 }
 
 export default usuarioService;

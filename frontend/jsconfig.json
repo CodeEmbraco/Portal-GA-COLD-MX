@@ -1,12 +1,28 @@
 {
-       "compilerOptions": {
+    "compilerOptions": {
         "paths": {
-            "@components/*": ["./components/*"],
-            "@hooks/*": ["./src/hooks/*"],
-            "@styles/*": ["./src/styles/*"],
-            "@services/*": ["./src/services/*"],
-            "@utils/*": ["./src/utils/*"],
+            "@components/*": [
+                "./components/*"
+            ],
+            "@config/*": [
+                "./src/config/*"
+            ],
+            "@hooks/*": [
+                "./src/hooks/*"
+            ],
+            "@styles/*": [
+                "./src/styles/*"
+            ],
+            "@services/*": [
+                "./src/services/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ],
         }
     },
-    "exclude": ["node_modules", "dist"]
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }

@@ -2,14 +2,14 @@
 import { useEffect, useRef, useState } from "react"
 
 //Servicios
-import UsuarioService from "../../services/UsuarioService.js"
+import UsuarioService from "@services/UsuarioService.js"
 
 //Iconos
-import { IconLock, IconUser, IconClose } from "../Icons.jsx"
+import { IconLock, IconUser, IconClose } from "@components/Icons.jsx"
 
 // Credenciales de prueba por defecto (mock, solo front-end).
-const VALID_USER = "admin"
-const VALID_PASS = "123"
+// const VALID_USER = "admin"
+// const VALID_PASS = "123"
 
 export default function LoginModal({ onClose, onSuccess }) {
   const [username, setUsername] = useState("")
@@ -25,8 +25,8 @@ export default function LoginModal({ onClose, onSuccess }) {
     e.preventDefault();
 
     const loginData = {
-      username: username.trim(),
-      password: password,
+      correo: username.trim(),
+      contraseña: password,
     };
 
     try {

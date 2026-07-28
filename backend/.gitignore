@@ -6,5 +6,8 @@ node_modules
 #Se genera solo cada que se corre el proyecto
 /src/generated/prisma
 
-#Comilados de typescript
+#Compilados de typescript
 dist/
+
+#archivo seed para llenar la base de datos con prisma
+/prisma/seed.ts

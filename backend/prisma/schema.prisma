@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "sqlserver"
-  // url      = env("DATABASE_URL") // SE NECESITA AGREGAR EL DB URL
 }
 
 model Usuario {

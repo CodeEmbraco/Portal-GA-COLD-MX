@@ -3,18 +3,18 @@ import { PoliticaController } from '../controllers/politicaController';
 
 const politicarouter = Router();
 
-politicarouter.get('/', PoliticaController.getAllPolicies);
+politicarouter.get('/getAllPolicies', PoliticaController.getAllPolicies);
 
 // GET /api/politica/:id
 // politicarouter.get('/:id', PoliticaController.getPolicy);
 
 // POST /api/politica
-politicarouter.post('/', PoliticaController.createPolicy);
+politicarouter.post('/createPolicy', PoliticaController.createPolicy);
 
 // PUT /api/politica/:id
-politicarouter.put('/:id', PoliticaController.updatePolicy);
+politicarouter.put('/updatePolicy/:id', PoliticaController.updatePolicy);
 
 // DELETE /api/politica/:id
-politicarouter.delete('/:id', PoliticaController.deletePolicy);
+politicarouter.put('/deletePolicy/:id', PoliticaController.deletePolicy);
 
 export default politicarouter;

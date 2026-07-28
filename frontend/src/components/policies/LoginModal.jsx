@@ -1,9 +1,15 @@
+//react
 import { useEffect, useRef, useState } from "react"
-import { IconLock, IconUser, IconClose } from "../Icons.jsx"
+
+//Servicios
+import UsuarioService from "@services/UsuarioService.js"
+
+//Iconos
+import { IconLock, IconUser, IconClose } from "@components/Icons.jsx"
 
 // Credenciales de prueba por defecto (mock, solo front-end).
-const VALID_USER = "admin"
-const VALID_PASS = "123"
+// const VALID_USER = "admin"
+// const VALID_PASS = "123"
 
 export default function LoginModal({ onClose, onSuccess }) {
   const [username, setUsername] = useState("")
@@ -15,15 +21,28 @@ export default function LoginModal({ onClose, onSuccess }) {
     firstFieldRef.current?.focus()
   }, [])
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (username.trim() === VALID_USER && password === VALID_PASS) {
-      setError("")
-      onSuccess()
-    } else {
-      setError("Usuario o contraseña incorrectos. Intenta de nuevo.")
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const loginData = {
+      correo: username.trim(),
+      contraseña: password,
+    };
+
+    try {
+      const response = await UsuarioService.autenticarUsuario(loginData);
+      console.log("Respuesta del servidor:", response);
+      if (response.resultado === 200) {
+        setError("");
+        onSuccess();
+      } else {
+        setError("Usuario o contraseña incorrectos. Intenta de nuevo.");
+      }
+    } catch (error) {
+      console.error("Error en el login:", error);
+      setError("Usuario o contraseña incorrectos. Intenta de nuevo.");
     }
-  }
+  };
 
   return (
     <div className="modal-overlay" role="presentation" onMouseDown={onClose}>

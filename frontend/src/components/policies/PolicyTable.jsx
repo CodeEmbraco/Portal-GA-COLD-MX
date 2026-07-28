@@ -7,8 +7,10 @@ function formatDate(iso) {
   return d.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })
 }
 
+
+
 // Vista de tabla para listar políticas.
-export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) {
+export default function PolicyTable({ policies, onEdit, onDelete, onDownload, isAuthenticated, role, department }) {
   return (
     <div className="table-wrap">
       <table className="policy-table">

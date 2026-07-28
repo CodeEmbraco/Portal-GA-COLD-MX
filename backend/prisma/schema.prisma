@@ -72,7 +72,8 @@ model Politica {
   modificadoPor   Int
   fechaModificado DateTime  @updatedAt
   esPrivado       Boolean   @default(true)
-  // <-- Una politica puede tener muchos archivos, se usara la politica como llave foranea en archivo
+  activo          Boolean   @default(true)
+  // Una politica puede tener muchos archivos, se usara la politica como llave foranea en archivo
   archivos        Archivo[] 
   //Usamos las llaves foraneas que necesitamos ya que estas relaciones son de muchos a una sola politica
   departamento              Departamento @relation(fields: [departamentoId], references: [id])

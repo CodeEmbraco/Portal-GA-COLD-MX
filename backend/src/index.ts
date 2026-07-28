@@ -11,7 +11,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization','x-user-data']
 }));
 
 //Esto permite que Express entienda el `req.body` en formato JSON

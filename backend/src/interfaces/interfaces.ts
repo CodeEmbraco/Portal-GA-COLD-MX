@@ -6,3 +6,9 @@ export interface Wrapper<T = any> {
   respuesta: string;           // El mensaje descriptivo ("Éxito", "No encontrado", etc.)
   error?: any;                 // Detalles del error (solo si algo explota)
 }
+
+export interface UsuarioToken {
+  id: number;
+  departamentoId: number;
+  rol: string;
+}

@@ -68,7 +68,8 @@ export const politicasDummy: Politica[] = [
     fechaSubida: new Date(),
     modificadoPor: 1,
     fechaModificado: new Date(),
-    esPrivado: true
+    esPrivado: true,
+    activo: true
   },
 ];
 

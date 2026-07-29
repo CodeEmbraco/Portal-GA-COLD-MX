@@ -1,20 +1,21 @@
 import { useEffect, useRef, useState } from "react"
-import { DEPARTMENTS } from "../../test/departments.js"
 import { IconClose, IconFile } from "../Icons.jsx"
+import { useCatalog } from "../../hooks/useCatalog.js"
 
 // Modal de formulario para crear o editar una política.
 // Recibe `policy` cuando se edita; null cuando se crea.
 export default function PolicyFormModal({ policy, defaultDepartment, onClose, onSave }) {
+  const { catalog: departments = [] } = useCatalog("departamento")
   const isEditing = Boolean(policy)
   const firstFieldRef = useRef(null)
 
   const [form, setForm] = useState({
-    title: policy?.title ?? "",
-    date: policy?.date ?? new Date().toISOString().slice(0, 10),
-    department: policy?.department ?? defaultDepartment ?? "",
-    version: policy?.version ?? "",
-    fileName: policy?.fileName ?? "",
-    isPrivate: policy?.isPrivate ?? false,
+    titulo: policy?.titulo ?? policy?.title ?? "",
+    departamentoId: policy?.departamentoId ?? policy?.department ?? defaultDepartment ?? "",
+    esPrivado: policy?.esPrivado ?? policy?.isPrivate ?? true,
+    // Campos visuales secundarios (opcionales)
+    fecha: policy?.fechaSubida ? policy.fechaSubida.split("T")[0] : new Date().toISOString().slice(0, 10),
+    nombreArchivo: policy?.nombreArchivo ?? "",
   })
   const [errors, setErrors] = useState({})
 
@@ -29,16 +30,13 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
 
   const handleFile = (e) => {
     const file = e.target.files?.[0]
-    if (file) update("fileName", file.name)
+    if (file) update("nombreArchivo", file.name)
   }
 
   const validate = () => {
     const next = {}
-    if (!form.title.trim()) next.title = "Ingresa un título."
-    if (!form.date) next.date = "Selecciona una fecha."
-    if (!form.department) next.department = "Selecciona un departamento."
-    if (!form.version.trim()) next.version = "Indica la versión."
-    if (!form.fileName.trim()) next.fileName = "Adjunta un archivo."
+    if (!form.titulo.trim()) next.titulo = "Ingresa un título."
+    if (!form.departamentoId) next.departamentoId = "Selecciona un departamento."
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -46,14 +44,12 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validate()) return
+
     onSave({
-      ...policy,
-      title: form.title.trim(),
-      date: form.date,
-      department: form.department,
-      version: form.version.trim(),
-      fileName: form.fileName.trim(),
-      isPrivate: form.isPrivate,
+      ...(policy?.id ? { id: policy.id } : {}),
+      titulo: form.titulo.trim(),
+      departamentoId: Number(form.departamentoId),
+      esPrivado: Boolean(form.esPrivado),
     })
   }
 
@@ -90,63 +86,38 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
             <input
               ref={firstFieldRef}
               type="text"
-              className={`field-input ${errors.title ? "is-invalid" : ""}`}
-              value={form.title}
+              className={`field-input ${errors.titulo ? "is-invalid" : ""}`}
+              value={form.titulo}
               placeholder="Ej. Política de Control de Calidad"
-              onChange={(e) => update("title", e.target.value)}
+              onChange={(e) => update("titulo", e.target.value)}
             />
-            {errors.title && <span className="field-error">{errors.title}</span>}
+            {errors.titulo && <span className="field-error">{errors.titulo}</span>}
           </label>
-
-          <div className="field-row">
-            <label className="field">
-              <span className="field-label">Fecha</span>
-              <input
-                type="date"
-                className={`field-input ${errors.date ? "is-invalid" : ""}`}
-                value={form.date}
-                onChange={(e) => update("date", e.target.value)}
-              />
-              {errors.date && <span className="field-error">{errors.date}</span>}
-            </label>
-
-            <label className="field">
-              <span className="field-label">Versión</span>
-              <input
-                type="text"
-                className={`field-input ${errors.version ? "is-invalid" : ""}`}
-                value={form.version}
-                placeholder="Ej. 1.0"
-                onChange={(e) => update("version", e.target.value)}
-              />
-              {errors.version && <span className="field-error">{errors.version}</span>}
-            </label>
-          </div>
 
           <div className="field-row">
             <label className="field">
               <span className="field-label">Departamento</span>
               <select
-                className={`field-input ${errors.department ? "is-invalid" : ""}`}
-                value={form.department}
-                onChange={(e) => update("department", e.target.value)}
+                className={`field-input ${errors.departamentoId ? "is-invalid" : ""}`}
+                value={form.departamentoId}
+                onChange={(e) => update("departamentoId", e.target.value)}
               >
                 <option value="">Selecciona un departamento…</option>
-                {DEPARTMENTS.map((dep) => (
-                  <option key={dep} value={dep}>
-                    {dep}
+                {departments.map((dep) => (
+                  <option key={dep.value} value={dep.value}>
+                    {dep.label}
                   </option>
                 ))}
               </select>
-              {errors.department && <span className="field-error">{errors.department}</span>}
+              {errors.departamentoId && <span className="field-error">{errors.departamentoId}</span>}
             </label>
 
             <label className="field">
               <span className="field-label">Visibilidad / Acceso</span>
               <select
                 className="field-input"
-                value={form.isPrivate ? "private" : "public"}
-                onChange={(e) => update("isPrivate", e.target.value === "private")}
+                value={form.esPrivado ? "private" : "public"}
+                onChange={(e) => update("esPrivado", e.target.value === "private")}
               >
                 <option value="public">🌐 Pública (Acceso libre)</option>
                 <option value="private">🔒 Privada (Personal autorizado)</option>
@@ -155,14 +126,14 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
           </div>
 
           <div className="field">
-            <span className="field-label">Adjuntar archivo (PDF, DOCX, XLSX…)</span>
-            <label className={`file-drop ${errors.fileName ? "is-invalid" : ""}`}>
+            <span className="field-label">Adjuntar archivo (PDF)</span>
+            <label className={`file-drop ${errors.nombreArchivo ? "is-invalid" : ""}`}>
               <span className="file-drop-icon">
                 <IconFile size={22} />
               </span>
               <span className="file-drop-text">
-                {form.fileName ? (
-                  <strong className="file-name">{form.fileName}</strong>
+                {form.nombreArchivo ? (
+                  <strong className="file-name">{form.nombreArchivo}</strong>
                 ) : (
                   <>
                     <strong>Haz clic para seleccionar</strong> o arrastra tu documento
@@ -172,11 +143,11 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
               <input
                 type="file"
                 className="file-input-hidden"
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                accept=".pdf"
                 onChange={handleFile}
               />
             </label>
-            {errors.fileName && <span className="field-error">{errors.fileName}</span>}
+            {errors.nombreArchivo && <span className="field-error">{errors.nombreArchivo}</span>}
           </div>
 
           <div className="modal-footer">

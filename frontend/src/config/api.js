@@ -5,17 +5,20 @@ const api = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'x-user-data': sessionStorage.getItem('userInfo')
+        'Accept': 'application/json'
     },
 });
 
 // Interceptor de Petición (Request)
 api.interceptors.request.use(
     (config) => {
-        // Aquí puedes obtener el token de localStorage, cookies o tu estado global
-        const token = sessionStorage.getItem('token');
+        // Leemos dinámicamente la información del usuario en cada petición
+        const userInfo = sessionStorage.getItem('userInfo');
+        if (userInfo) {
+            config.headers['x-user-data'] = userInfo;
+        }
 
+        const token = sessionStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

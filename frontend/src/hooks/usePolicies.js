@@ -7,21 +7,13 @@ export const usePolicies = () => {
     const [isoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    //El fetch leera el sessionStorage y mandara la informacion del usuario loggeado por medio de los headers
-    //Si no hay usuario loggeado, solo mandara las politicas publicas
-    const userInfo = sessionStorage.getItem('userInfo')
-    const headers = {
-        'Content-Type': 'application/json',
-        'x-user-data': JSON.stringify(userInfo)
-    }
-
-    //GET:Obtiene las politicas
+    //GET: Obtiene las políticas
     const fetchPolicies = useCallback(async () => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const response = await api.get(`/api/politica/getAllPolicies`, headers)
+            const response = await api.get(`/api/politica/getAllPolicies`);
             setPolicies(response.data?.listado || []);
         } catch (error) {
             setError(error.response?.data?.message || 'Error al obtener las politicas');

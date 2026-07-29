@@ -21,13 +21,14 @@ import "./policies.css"
 export default function PoliciesModule({
   isAuthenticated,
   onAuthenticated,
+  onLogout,
 }) {
   const [selectedDept, setSelectedDept] = useState(null)
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
 
   //Llamamos los hooks
-  const { policies, isLoading, error, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
+  const { policies, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
   const { catalog: departments = [] } = useCatalog("departamento");
 
   //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
@@ -36,6 +37,14 @@ export default function PoliciesModule({
   useEffect(() => {
     fetchPolicies();
   }, [isAuthenticated, fetchPolicies]);
+
+  //Se ejecuta únicamente cuando el componente se desmonta (al salir del módulo)
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem("userInfo");
+      if (onLogout) onLogout();
+    };
+  }, []);
 
   // Control de modales
   const [showLogin, setShowLogin] = useState(false)
@@ -86,14 +95,19 @@ export default function PoliciesModule({
       pendingAction()
       setPendingAction(null)
     }
+    fetchPolicies();
   }
 
   //Funciones para crear, actualizar y eliminar politicas usando nuestro hook
-  const handleCreate = () =>
-    requireAuth(() => setFormState({ mode: "create", policy: null }))
+  //En esta funcion se manda a llamar el createPolicy del hook y se cambia el estado de formState a null
+  const handleCreate = () => {
 
-  const handleEdit = (policy) =>
+    requireAuth(() => setFormState({ mode: "create", policy: null }))
+  }
+
+  const handleEdit = (policy) => {
     requireAuth(() => setFormState({ mode: "edit", policy }))
+  }
 
   //Maneja la eliminacion de una politica
   const handleDelete = async (id) => requireAuth(async () => {
@@ -114,15 +128,15 @@ export default function PoliciesModule({
   })
 
   //Guarda la politica
-  const handleSave = (data) => {
+  const handleSave = async (data) => {
     if (formState?.mode === "edit") {
-      updatePolicy(data)
+      await updatePolicy(data.id, data)
+      setFormState(null)
     } else {
-      createPolicy(data)
+      await createPolicy(data)
     }
     setFormState(null)
   }
-
 
   const confirmDelete = () => {
     if (deleteTarget) {

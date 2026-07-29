@@ -43,6 +43,9 @@ export default function App() {
           <PoliciesModule
             isAuthenticated={isAuthenticated}
             onAuthenticated={() => setIsAuthenticated(true)}
+            onLogout={() => {
+              setIsAuthenticated(false)
+            }}
           />
         )
       default:

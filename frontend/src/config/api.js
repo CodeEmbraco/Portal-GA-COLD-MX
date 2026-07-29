@@ -5,7 +5,8 @@ const api = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'x-user-data': sessionStorage.getItem('userInfo')
     },
 });
 

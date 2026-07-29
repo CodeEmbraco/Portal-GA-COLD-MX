@@ -2,7 +2,8 @@ import "dotenv/config";
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import politicaRouter from './routes/politicaRouter';
-import authRouter from './routes/authrouter';
+import authRouter from "./routes/authRouter";
+import catalogoRouter from "./routes/catalogRouter";
 const app = express();
 const puerto = 4000;
 
@@ -25,7 +26,8 @@ app.get('/', (req: Request, res: Response) => {
 // registro de rutas'
 app.use('/api/auth', authRouter);
 app.use('/api/politica', politicaRouter);
+app.use('/api/combo', catalogoRouter)
 
 app.listen(puerto, () => {
-  console.log(`🚀 Servidor encendido y escuchando en http://localhost:${puerto}`);
+  console.log(`Servidor encendido y escuchando en http://localhost:${puerto}`);
 });

@@ -28,8 +28,6 @@ model Usuario {
   politicasModificadas   Politica[]       @relation("PoliticaModificadaPor")
   archivosSubidos        Archivo[]        @relation("ArchivoSubidoPor")
   archivosModificados    Archivo[]        @relation("ArchivoModificadoPor")
-  versionesSubidas       VersionArchivo[] @relation("VersionSubidaPor")
-  versionesModificadas   VersionArchivo[] @relation("VersionModificadaPor")
 }
 
 model Rol {
@@ -84,30 +82,15 @@ model Archivo {
   id              Int              @id @default(autoincrement())
   codigo          String
   politicaId      Int
+  ruta            String
+  activo          Boolean  @default(true)
   subidoPor       Int
   fechaSubida     DateTime         @default(now())
   modificadoPor   Int
   fechaModificado DateTime         @updatedAt
-  // Un archivo puede tener muchas versiones, se usara el archivo como llave foranea en versionArchivo
-  versiones       VersionArchivo[] 
   //Usamos las llaves foraneas que necesitamos ya que estas relaciones son de muchos a un solo archivo
   politica                 Politica @relation(fields: [politicaId], references: [id])
   archivoUsuarioSubio      Usuario  @relation("ArchivoSubidoPor", fields: [subidoPor], references: [id], onDelete: NoAction, onUpdate: NoAction)
   archivoUsuarioModificado Usuario  @relation("ArchivoModificadoPor", fields: [modificadoPor], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model VersionArchivo {
-  id              Int      @id @default(autoincrement())
-  archivoId       Int
-  ruta            String
-  version         Int
-  active          Boolean  @default(true)
-  subidoPor       Int
-  fechaSubida     DateTime @default(now())
-  modificadoPor   Int
-  fechaModificado DateTime @updatedAt
-  //Usamos las llaves foraneas que necesitamos ya que estas relaciones son de muchos a un solo archivo
-  archivo                         Archivo @relation(fields: [archivoId], references: [id])
-  versionArchivoUsuarioSubio      Usuario @relation("VersionSubidaPor", fields: [subidoPor], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  versionArchivoUsuarioModificado Usuario @relation("VersionModificadaPor", fields: [modificadoPor], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}

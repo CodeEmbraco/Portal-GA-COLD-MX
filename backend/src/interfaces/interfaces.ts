@@ -12,3 +12,8 @@ export interface UsuarioToken {
   departamentoId: number;
   rol: string;
 }
+
+export interface ComboItem{
+  value: string | number;
+  label: string;  
+}

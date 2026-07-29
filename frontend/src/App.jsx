@@ -1,10 +1,15 @@
+//react
 import { useEffect, useState } from "react"
+
+//Componentes
 import Navbar from "./components/Navbar.jsx"
 import Home from "./components/Home.jsx"
 import PoliciesModule from "./components/policies/PoliciesModule.jsx"
 import Placeholder from "./components/Placeholder.jsx"
 import Footer from "./components/Footer.jsx"
-import { INITIAL_POLICIES } from "./test/mockPolicies.js"
+
+// mockPolicies
+//  import { INITIAL_POLICIES } from "./test/mockPolicies.js"
 
 // Genera un id unico simple para nuevas politicas.
 const newId = () => `pol-${Date.now()}-${Math.floor(Math.random() * 1000)}`
@@ -12,8 +17,7 @@ const newId = () => `pol-${Date.now()}-${Math.floor(Math.random() * 1000)}`
 export default function App() {
   const [activeTab, setActiveTab] = useState("home")
 
-  // Estado local que simula la persistencia de datos durante la sesion.
-  const [policies, setPolicies] = useState(INITIAL_POLICIES)
+  //Estado para mantener la autenticacion
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   // Al cambiar de pestaña, subimos el scroll al inicio.
@@ -21,18 +25,15 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [activeTab])
 
-  const handleCreate = (data) => {
-    setPolicies((prev) => [{ ...data, id: newId() }, ...prev])
-  }
+  //Si el usuario cambia de pagina, limpiamos el sessionStorage
+  useEffect(() => {
+    if (activeTab !== "policies") {
+      sessionStorage.removeItem("token")
+      setIsAuthenticated(false)
+    }
+  }, [activeTab])
 
-  const handleUpdate = (data) => {
-    setPolicies((prev) => prev.map((p) => (p.id === data.id ? { ...p, ...data } : p)))
-  }
-
-  const handleDelete = (id) => {
-    setPolicies((prev) => prev.filter((p) => p.id !== id))
-  }
-
+  //renderContent: Renderiza el contenido de la pestaña activa
   const renderContent = () => {
     switch (activeTab) {
       case "home":
@@ -40,10 +41,6 @@ export default function App() {
       case "policies":
         return (
           <PoliciesModule
-            policies={policies}
-            onCreate={handleCreate}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
             isAuthenticated={isAuthenticated}
             onAuthenticated={() => setIsAuthenticated(true)}
           />

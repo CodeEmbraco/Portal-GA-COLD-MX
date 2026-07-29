@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
+import { usePolicies } from "@hooks/usePolicies"
 
 import {
   IconPlus,
@@ -21,16 +22,22 @@ import { DEPARTMENTS } from "../../test/departments.js"
 import { MOCK_USERS } from "../../test/mockUsers.js"
 
 export default function PoliciesModule({
-  policies,
-  onCreate,
-  onUpdate,
-  onDelete,
   isAuthenticated,
   onAuthenticated,
 }) {
   const [selectedDept, setSelectedDept] = useState(null)
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
+
+  //Llamamos al hook
+  const { policies, isLoading, error, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
+
+  //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
+  //Cuando se monta el componente, trae solamente politicas publicas.
+  //Cuando el usuario valida su sesion, se vuelve a ejecutar y trae tambien las politicas privadas si es que aplica.
+  useEffect(() => {
+    fetchPolicies();
+  }, [isAuthenticated, fetchPolicies]);
 
   // Control de modales
   const [showLogin, setShowLogin] = useState(false)
@@ -45,17 +52,13 @@ export default function PoliciesModule({
     return map
   }, [policies])
 
-  // Políticas filtradas por departamento + búsqueda
+  //Las politicas ya vienen filtradas desde el backend, incluso si el usuario ya está validado
+  //Solo filtraremos por departamento si el usuario selecciona uno
   const filtered = useMemo(() => {
-    const term = search.trim().toLowerCase()
     return policies.filter((p) => {
-      const matchesDept = !selectedDept || p.department === selectedDept
-      const matchesTerm =
-        !term ||
-        p.title.toLowerCase().includes(term) ||
-        p.fileName.toLowerCase().includes(term) ||
-        p.department.toLowerCase().includes(term)
-      return matchesDept && matchesTerm
+      const matchesDept = !selectedDept || p.departmento.nombre === selectedDept
+      const matchesSearch = !search || p.nombreArchivo.toLowerCase().includes(search.toLowerCase())
+      return matchesDept && matchesSearch
     })
   }, [policies, selectedDept, search])
 
@@ -78,22 +81,41 @@ export default function PoliciesModule({
     }
   }
 
-  const openCreate = () =>
+  //Funciones para crear, actualizar y eliminar politicas usando nuestro hook
+  const handleCreate = () =>
     requireAuth(() => setFormState({ mode: "create", policy: null }))
 
-  const openEdit = (policy) =>
+  const handleEdit = (policy) =>
     requireAuth(() => setFormState({ mode: "edit", policy }))
 
-  const askDelete = (policy) => requireAuth(() => setDeleteTarget(policy))
+  //Maneja la eliminacion de una politica
+  const handleDelete = async (id) => requireAuth(async () => {
+    if (!isAuthenticated) {
+      alert("No tienes permisos para realizar esta accion");
+      return;
+    }
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta política?")) {
+      try {
+        await deletePolicy(id);
+        fetchPolicies();
+        alert("Política eliminada exitosamente");
+      } catch (error) {
+        console.error("Error al eliminar la política", error);
+        alert("Ocurrio un error al eliminar la política. Intente de nuevo.");
+      }
+    }
+  })
 
+  //Guarda la politica
   const handleSave = (data) => {
     if (formState?.mode === "edit") {
-      onUpdate(data)
+      updatePolicy(data)
     } else {
-      onCreate(data)
+      createPolicy(data)
     }
     setFormState(null)
   }
+
 
   const confirmDelete = () => {
     if (deleteTarget) {
@@ -120,34 +142,34 @@ export default function PoliciesModule({
 
       {/* Selección por departamentos */}
       <section className="dept-section" aria-label="Departamentos">
-        <h2 className="section-label">Departamentos</h2>
         <div className="dept-section-header">
-          <div className="dept-filter">
-            <select
-              className={`dept-chip`}
-              onChange={(e) => setSelectedDept(e.target.value)}
-            >
-              <option value={null}>Seleccionar departamento</option>
-              {DEPARTMENTS.map((dep) => (
-                <option key={dep} value={dep} className={` ${selectedDept === dep ? "is-active" : ""}`}>
-                  {dep} ({countsByDept[dep] || 0})
-                </option>
-              ))}
-            </select>
-            {selectedDept && (
-              <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
-                <IconArrowLeft size={16} /> Ver todos
-              </button>
-            )}
-          </div>
+          <h2 className="section-label">Departamentos</h2>
           <div className="dept-section-actions">
             <button className="btn-lock" onClick={() => requireAuth(() => { })}>
               <IconLock size={22} />
             </button>
-            <button className="btn btn-primary btn-new" onClick={openCreate}>
+            <button className="btn btn-primary btn-new" onClick={handleCreate}>
               <IconPlus size={18} /> Nueva política
             </button>
           </div>
+          {selectedDept && (
+            <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
+              <IconArrowLeft size={16} /> Ver todos
+            </button>
+          )}
+        </div>
+        <div className="dept-grid">
+          {DEPARTMENTS.map((dep) => (
+            <button
+              key={dep}
+              className={`dept-chip ${selectedDept === dep ? "is-active" : ""}`}
+              onClick={() => setSelectedDept((cur) => (cur === dep ? null : dep))}
+              aria-pressed={selectedDept === dep}
+            >
+              <span className="dept-name">{dep}</span>
+              <span className="dept-count">{countsByDept[dep] || 0}</span>
+            </button>
+          ))}
         </div>
       </section>
 
@@ -204,14 +226,14 @@ export default function PoliciesModule({
                   ? "Ajusta el filtro o el término de búsqueda."
                   : "Comienza cargando una nueva política."}
               </p>
-              <button className="btn btn-primary" onClick={openCreate}>
+              <button className="btn btn-primary" onClick={handleCreate}>
                 <IconPlus size={18} /> Nueva política
               </button>
             </div>
           ) : viewMode === "table" ? (
-            <PolicyTable policies={filtered} onEdit={openEdit} onDelete={askDelete} />
+            <PolicyTable policies={filtered} onEdit={handleEdit} onDelete={handleDelete} />
           ) : (
-            <PolicyCards policies={filtered} onEdit={openEdit} onDelete={askDelete} />
+            <PolicyCards policies={filtered} onEdit={handleEdit} onDelete={handleDelete} />
           )}
         </>
       )}

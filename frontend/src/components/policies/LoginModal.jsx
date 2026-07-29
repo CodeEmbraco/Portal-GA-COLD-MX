@@ -1,8 +1,8 @@
 //react
 import { useEffect, useRef, useState } from "react"
 
-//Servicios
-import UsuarioService from "@services/UsuarioService.js"
+//hook
+import { useAuthenticated } from "@hooks/useAuthenticated"
 
 //Iconos
 import { IconLock, IconUser, IconClose } from "@components/Icons.jsx"
@@ -12,6 +12,9 @@ import { IconLock, IconUser, IconClose } from "@components/Icons.jsx"
 // const VALID_PASS = "123"
 
 export default function LoginModal({ onClose, onSuccess }) {
+
+  const { login, isAuthenticated } = useAuthenticated();
+
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -30,7 +33,7 @@ export default function LoginModal({ onClose, onSuccess }) {
     };
 
     try {
-      const response = await UsuarioService.autenticarUsuario(loginData);
+      const response = await login(loginData);
       console.log("Respuesta del servidor:", response);
       if (response.resultado === 200) {
         setError("");

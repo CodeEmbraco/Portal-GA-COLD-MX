@@ -1,4 +1,4 @@
-import { Usuario, Rol, Departamento, Entidad, Politica,Archivo,VersionArchivo } from "./generated/prisma";
+import { Usuario, Rol, Departamento, Entidad, Politica,Archivo } from "./generated/prisma";
 
 export const rolesDummy: Rol[] =[
     { id: 1, rol: 'Admin', descripcion: 'Administrador del sistema' },
@@ -70,32 +70,5 @@ export const politicasDummy: Politica[] = [
     fechaModificado: new Date(),
     esPrivado: true,
     activo: true
-  },
-];
-
-
-export const archivosDummy: Archivo[] = [
-  {
-    id: 1,
-    codigo: 'POL-IT-001',
-    politicaId: 1,
-    subidoPor: 1,
-    fechaSubida: new Date(),
-    modificadoPor: 1,
-    fechaModificado: new Date(),
-  },
-];
-
-export const versionesDummy: VersionArchivo[] = [
-  {
-    id: 1,
-    archivoId: 1,
-    ruta: '/uploads/politicas/POL-IT-001_v1.pdf',
-    version: 1,
-    active: true,
-    subidoPor: 1,
-    fechaSubida: new Date(),
-    modificadoPor: 1,
-    fechaModificado: new Date(),
   },
 ];

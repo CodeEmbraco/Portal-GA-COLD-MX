@@ -22,7 +22,7 @@ export const usePolicies = () => {
 
         try {
             const response = await api.get(`/api/politica/getAllPolicies`, headers)
-            setPolicies(response.listado[0]);
+            setPolicies(response.data?.listado || []);
         } catch (error) {
             setError(error.response?.data?.message || 'Error al obtener las politicas');
         } finally {

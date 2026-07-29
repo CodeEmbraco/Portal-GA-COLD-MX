@@ -28,7 +28,7 @@ export default function App() {
   //Si el usuario cambia de pagina, limpiamos el sessionStorage
   useEffect(() => {
     if (activeTab !== "policies") {
-      sessionStorage.removeItem("token")
+      sessionStorage.removeItem("userInfo")
       setIsAuthenticated(false)
     }
   }, [activeTab])

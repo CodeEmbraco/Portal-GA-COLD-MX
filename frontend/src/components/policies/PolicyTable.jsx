@@ -7,10 +7,8 @@ function formatDate(iso) {
   return d.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })
 }
 
-
-
 // Vista de tabla para listar políticas.
-export default function PolicyTable({ policies, onEdit, onDelete, onDownload, isAuthenticated, role, department }) {
+export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) {
   return (
     <div className="table-wrap">
       <table className="policy-table">
@@ -19,7 +17,7 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, is
             <th scope="col">Política</th>
             <th scope="col">Departamento</th>
             <th scope="col">Acceso</th>
-            <th scope="col">Versión</th>
+            {/* <th scope="col">Versión</th> */}
             <th scope="col">Fecha</th>
             <th scope="col">Archivo</th>
             <th scope="col" className="col-actions">
@@ -30,23 +28,23 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, is
         <tbody>
           {policies.map((p) => (
             <tr key={p.id}>
-              <td className="cell-title">{p.title}</td>
+              <td className="cell-title">{p.titulo}</td>
               <td>
-                <span className="badge">{p.department}</span>
+                <span className="badge">{p.departamento?.nombre}</span>
               </td>
               <td>
-                <span className={`badge ${p.isPrivate ? "badge-private" : "badge-public"}`}>
-                  {p.isPrivate ? "🔒 Privada" : "🌐 Pública"}
+                <span className={`badge ${p.esPrivado ? "badge-private" : "badge-public"}`}>
+                  {p.esPrivado ? "🔒 Privada" : "🌐 Pública"}
                 </span>
               </td>
-              <td className="cell-version">v{p.version}</td>
-              <td className="cell-muted">{formatDate(p.date)}</td>
+              {/* <td className="cell-version">v{p.version}</td> */}
+              <td className="cell-muted">{formatDate(p.fechaSubida).split("T")[0]}</td>
               <td>
                 <button
                   type="button"
                   className="file-pill"
                   onClick={() => onDownload(p)}
-                  title={p.isPrivate ? "Requiere inicio de sesión" : "Descargar documento"}
+                  title={p.esPrivado ? "Requiere inicio de sesión" : "Descargar documento"}
                   style={{
                     background: "none",
                     border: "none",
@@ -64,7 +62,7 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, is
                   <button
                     className="action-btn"
                     onClick={() => onEdit(p)}
-                    aria-label={`Editar ${p.title}`}
+                    aria-label={`Editar ${p.titulo}`}
                     title="Editar"
                   >
                     <IconEdit size={17} />
@@ -72,7 +70,7 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, is
                   <button
                     className="action-btn is-danger"
                     onClick={() => onDelete(p)}
-                    aria-label={`Eliminar ${p.title}`}
+                    aria-label={`Eliminar ${p.titulo}`}
                     title="Eliminar"
                   >
                     <IconTrash size={17} />

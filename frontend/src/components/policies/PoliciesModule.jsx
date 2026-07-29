@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react"
 import { usePolicies } from "@hooks/usePolicies"
+import { useCatalog } from "@hooks/useCatalog"
 
 import {
   IconPlus,
@@ -17,10 +18,6 @@ import PolicyTable from "./PolicyTable.jsx"
 import PolicyCards from "./PolicyCards.jsx"
 import "./policies.css"
 
-//Mock Data
-import { DEPARTMENTS } from "../../test/departments.js"
-import { MOCK_USERS } from "../../test/mockUsers.js"
-
 export default function PoliciesModule({
   isAuthenticated,
   onAuthenticated,
@@ -29,8 +26,9 @@ export default function PoliciesModule({
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
 
-  //Llamamos al hook
+  //Llamamos los hooks
   const { policies, isLoading, error, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
+  const { catalog: departments = [] } = useCatalog("departamento");
 
   //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
   //Cuando se monta el componente, trae solamente politicas publicas.
@@ -48,7 +46,12 @@ export default function PoliciesModule({
   // Conteo de políticas por departamento
   const countsByDept = useMemo(() => {
     const map = {}
-    for (const p of policies) map[p.department] = (map[p.department] || 0) + 1
+    for (const p of policies) {
+      const deptId = p.departamentoId ?? p.departamento?.id
+      if (deptId != null) {
+        map[deptId] = (map[deptId] || 0) + 1
+      }
+    }
     return map
   }, [policies])
 
@@ -56,8 +59,12 @@ export default function PoliciesModule({
   //Solo filtraremos por departamento si el usuario selecciona uno
   const filtered = useMemo(() => {
     return policies.filter((p) => {
-      const matchesDept = !selectedDept || p.departmento.nombre === selectedDept
-      const matchesSearch = !search || p.nombreArchivo.toLowerCase().includes(search.toLowerCase())
+      // 1. Obtenemos el ID del departamento de forma segura
+      const deptId = p.departamentoId ?? p.departamento?.id
+      const matchesDept = !selectedDept || String(deptId) === String(selectedDept)
+      // 2. Buscamos por título o nombre de archivo según lo que venga en el objeto
+      const titleToSearch = p.titulo || p.title || p.nombreArchivo || ""
+      const matchesSearch = !search || titleToSearch.toLowerCase().includes(search.toLowerCase())
       return matchesDept && matchesSearch
     })
   }, [policies, selectedDept, search])
@@ -143,7 +150,14 @@ export default function PoliciesModule({
       {/* Selección por departamentos */}
       <section className="dept-section" aria-label="Departamentos">
         <div className="dept-section-header">
-          <h2 className="section-label">Departamentos</h2>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
+            <h2 className="section-label">Departamentos</h2>
+            {selectedDept && (
+              <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
+                <IconArrowLeft size={16} /> Ver todos
+              </button>
+            )}
+          </div>
           <div className="dept-section-actions">
             <button className="btn-lock" onClick={() => requireAuth(() => { })}>
               <IconLock size={22} />
@@ -152,22 +166,17 @@ export default function PoliciesModule({
               <IconPlus size={18} /> Nueva política
             </button>
           </div>
-          {selectedDept && (
-            <button className="btn btn-ghost btn-back" onClick={() => setSelectedDept(null)}>
-              <IconArrowLeft size={16} /> Ver todos
-            </button>
-          )}
         </div>
         <div className="dept-grid">
-          {DEPARTMENTS.map((dep) => (
+          {departments?.map((dep) => (
             <button
-              key={dep}
-              className={`dept-chip ${selectedDept === dep ? "is-active" : ""}`}
-              onClick={() => setSelectedDept((cur) => (cur === dep ? null : dep))}
-              aria-pressed={selectedDept === dep}
+              key={dep.value}
+              className={`dept-chip ${selectedDept === dep.value ? "is-active" : ""}`}
+              onClick={() => setSelectedDept((cur) => (cur === dep.value ? null : dep.value))}
+              aria-pressed={selectedDept === dep.value}
             >
-              <span className="dept-name">{dep}</span>
-              <span className="dept-count">{countsByDept[dep] || 0}</span>
+              <span className="dept-name">{dep.label}</span>
+              <span className="dept-count">{countsByDept[dep.value] || 0}</span>
             </button>
           ))}
         </div>

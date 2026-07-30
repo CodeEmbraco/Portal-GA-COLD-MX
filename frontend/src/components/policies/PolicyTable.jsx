@@ -38,24 +38,25 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) 
                 </span>
               </td>
               {/* <td className="cell-version">v{p.version}</td> */}
-              <td className="cell-muted">{formatDate(p.fechaSubida).split("T")[0]}</td>
+              <td className="cell-muted">{formatDate(p.fechaSubida).split('T')[0]}</td>
               <td>
-                <button
-                  type="button"
-                  className="file-pill"
-                  onClick={() => onDownload(p)}
-                  title={p.esPrivado ? "Requiere inicio de sesión" : "Descargar documento"}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    padding: 0,
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  <IconFile size={15} />
-                  <span className="file-pill-name">{p.fileName}</span>
-                </button>
+                {p.archivos && p.archivos.length > 0 ? (
+                  p.archivos.map((archivo) => (
+                    <button
+                      key={archivo.id}
+                      type="button"
+                      className="file-pill"
+                      onClick={() => onDownload(archivo)}
+                      title={`Descargar: ${archivo.codigo}`}
+                      style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
+                    >
+                      <IconFile size={15} />
+                      <span className="file-pill-name">{archivo.codigo}</span>
+                    </button>
+                  ))
+                ) : (
+                  <span className="cell-muted" style={{ fontSize: "0.8em" }}>Sin archivos</span>
+                )}
               </td>
               <td className="col-actions">
                 <div className="row-actions">

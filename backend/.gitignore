@@ -11,3 +11,6 @@ dist/
 
 #archivo seed para llenar la base de datos con prisma
 /prisma/seed.ts
+
+#carpeta de uploads
+uploads/

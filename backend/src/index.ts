@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import politicaRouter from './routes/politicaRouter';
 import authRouter from "./routes/authRouter";
 import catalogoRouter from "./routes/catalogRouter";
@@ -13,11 +14,15 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization','x-user-data']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-user-data']
 }));
 
 //Esto permite que Express entienda el `req.body` en formato JSON
 app.use(express.json());
+
+// Sirve los archivos subidos desde /uploads (fuera de /src)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 
 //ruta de prueba original
 app.get('/', (req: Request, res: Response) => {
@@ -27,8 +32,9 @@ app.get('/', (req: Request, res: Response) => {
 // registro de rutas'
 app.use('/api/auth', authRouter);
 app.use('/api/politica', politicaRouter);
-app.use('/api/archivo', archivoRouter)
+app.use('/api/archivo', archivoRouter);
+app.use('/api/combo', catalogoRouter);
 
-app.listen(puerto, () => {  
+app.listen(puerto, () => {
   console.log(`Servidor encendido y escuchando en http://localhost:${puerto}`);
 });

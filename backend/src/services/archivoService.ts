@@ -22,9 +22,9 @@ export class ArchivoService {
       }
 
       const archivos = await prisma.archivo.findMany({
-        where: { 
+        where: {
           politicaId,
-          activo: true 
+          activo: true
         }
       });
 
@@ -46,10 +46,13 @@ export class ArchivoService {
       const { codigo, politicaId, ruta } = body || {};
       const idPolitica = parseInt(String(politicaId), 10);
 
-      if (!codigo || isNaN(idPolitica) || !ruta) {
-        return { resultado: 400, respuesta: 'Faltan campos obligatorios (codigo, politicaId, ruta)' };
+      if (!codigo || isNaN(idPolitica)) {
+        return { resultado: 400, respuesta: 'Faltan campos obligatorios (codigo, politicaId)' };
       }
 
+      if (!ruta) {
+        return { resultado: 400, respuesta: 'El archivo físico no se procesó correctamente en el servidor' };
+      }
       const nuevoArchivo = await prisma.archivo.create({
         data: {
           codigo,

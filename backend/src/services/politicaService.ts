@@ -36,6 +36,10 @@ export class PoliticaService {
         where: condiciones,
         include: {
           departamento: true,
+          archivos: {
+            where: { activo: true },
+            orderBy: { fechaSubida: 'desc' }
+          }
         }
       });
 

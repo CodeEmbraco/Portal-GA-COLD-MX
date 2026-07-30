@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react"
 import { usePolicies } from "@hooks/usePolicies"
 import { useCatalog } from "@hooks/useCatalog"
+import { useFile } from "@hooks/useFile"
 
 import {
   IconPlus,
@@ -29,6 +30,7 @@ export default function PoliciesModule({
 
   //Llamamos los hooks
   const { policies, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
+  const { createFile, getFilesByPolicy, downloadFile, isDownloading } = useFile();
   const { catalog: departments = [] } = useCatalog("departamento");
 
   //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
@@ -68,11 +70,11 @@ export default function PoliciesModule({
   //Solo filtraremos por departamento si el usuario selecciona uno
   const filtered = useMemo(() => {
     return policies.filter((p) => {
-      // 1. Obtenemos el ID del departamento de forma segura
+      //Obtenemos el ID del departamento de forma segura
       const deptId = p.departamentoId ?? p.departamento?.id
       const matchesDept = !selectedDept || String(deptId) === String(selectedDept)
-      // 2. Buscamos por título o nombre de archivo según lo que venga en el objeto
-      const titleToSearch = p.titulo || p.title || p.nombreArchivo || ""
+      //Buscamos por título de la política (campo del modelo Politica)
+      const titleToSearch = p.titulo || p.title || ""
       const matchesSearch = !search || titleToSearch.toLowerCase().includes(search.toLowerCase())
       return matchesDept && matchesSearch
     })
@@ -88,6 +90,7 @@ export default function PoliciesModule({
     }
   }
 
+  //Se ejecuta cuando el usuario inicia sesión exitosamente
   const handleLoginSuccess = () => {
     onAuthenticated()
     setShowLogin(false)
@@ -109,33 +112,52 @@ export default function PoliciesModule({
     requireAuth(() => setFormState({ mode: "edit", policy }))
   }
 
-  //Maneja la eliminacion de una politica
-  const handleDelete = async (id) => requireAuth(async () => {
-    if (!isAuthenticated) {
-      alert("No tienes permisos para realizar esta accion");
-      return;
-    }
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta política?")) {
+  //Maneja la eliminación de una política
+  const handleDelete = (target) => requireAuth(async () => {
+    const id = typeof target === "object" ? target.id : target;
+    const title = typeof target === "object" ? (target.titulo || target.title) : "";
+
+    if (window.confirm(`¿Estás seguro de que deseas eliminar ${title ? `"${title}"` : "esta política"}?`)) {
       try {
         await deletePolicy(id);
-        fetchPolicies();
-        alert("Política eliminada exitosamente");
+        alert("Política eliminada exitosamente.");
       } catch (error) {
-        console.error("Error al eliminar la política", error);
-        alert("Ocurrio un error al eliminar la política. Intente de nuevo.");
+        console.error("Error al eliminar la política:", error);
+        alert(error.message || "Ocurrió un error al eliminar la política.");
       }
     }
   })
 
-  //Guarda la politica
+  //Guarda la política (Creación o Edición) y sube el archivo si se adjunto uno
   const handleSave = async (data) => {
-    if (formState?.mode === "edit") {
-      await updatePolicy(data.id, data)
-      setFormState(null)
-    } else {
-      await createPolicy(data)
+    try {
+      let policyId = data.id;
+
+      if (formState?.mode === "edit") {
+        await updatePolicy(data.id, data);
+        alert("Política actualizada exitosamente.");
+      } else {
+        const res = await createPolicy(data);
+        policyId = res?.objeto?.id || res?.objetoId;
+        alert("Política creada exitosamente.");
+      }
+
+      // Si el usuario adjuntó un archivo físico en el formulario, lo subimos
+      if (data.rawFile && policyId) {
+        const formData = new FormData();
+        formData.append("archivo", data.rawFile);
+        formData.append("codigo", `COD-${Date.now()}`);
+        formData.append("politicaId", policyId);
+        // formData.append("ruta", data.rawFile.name);
+
+        await createFile(formData);
+      }
+
+      setFormState(null);
+    } catch (error) {
+      console.error("Error al guardar la política o subir archivo:", error);
+      alert(error.message || "Ocurrió un error al guardar la política.");
     }
-    setFormState(null)
   }
 
   const confirmDelete = () => {
@@ -254,9 +276,9 @@ export default function PoliciesModule({
               </button>
             </div>
           ) : viewMode === "table" ? (
-            <PolicyTable policies={filtered} onEdit={handleEdit} onDelete={handleDelete} />
+            <PolicyTable policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} />
           ) : (
-            <PolicyCards policies={filtered} onEdit={handleEdit} onDelete={handleDelete} />
+            <PolicyCards policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} />
           )}
         </>
       )}

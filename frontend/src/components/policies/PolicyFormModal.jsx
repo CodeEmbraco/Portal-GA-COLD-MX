@@ -30,7 +30,10 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
 
   const handleFile = (e) => {
     const file = e.target.files?.[0]
-    if (file) update("nombreArchivo", file.name)
+    if (file) {
+      update("nombreArchivo", file.name)
+      update("rawFile", file)
+    }
   }
 
   const validate = () => {
@@ -50,6 +53,7 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
       titulo: form.titulo.trim(),
       departamentoId: Number(form.departamentoId),
       esPrivado: Boolean(form.esPrivado),
+      rawFile: form.rawFile,
     })
   }
 

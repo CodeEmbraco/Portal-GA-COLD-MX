@@ -20,6 +20,24 @@ import PolicyCards from "./PolicyCards.jsx"
 import LockToggle from "../LockToggle/LockToggle.jsx"
 import "./policies.css"
 
+function IconChevronDown({ size = 18, style }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={style}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  )
+}
+
 export default function PoliciesModule({
   isAuthenticated,
   onAuthenticated,
@@ -28,6 +46,9 @@ export default function PoliciesModule({
   const [selectedDept, setSelectedDept] = useState(null)
   const [search, setSearch] = useState("")
   const [viewMode, setViewMode] = useState("table") // "table" | "cards"
+
+  // Estado para mostrar/ocultar el listado de políticas
+  const [isExpanded, setIsExpanded] = useState(true)
 
   //Llamamos los hooks
   const { policies, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
@@ -251,6 +272,38 @@ export default function PoliciesModule({
           </span>
         </div>
 
+        {/* Botón central para Ocultar / Mostrar la información */}
+        <div className="toolbar-center">
+          <button
+            type="button"
+            className="btn btn-ghost toggle-expand-btn"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            title={isExpanded ? "Ocultar políticas" : "Mostrar políticas"}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "6px 14px",
+              borderRadius: "20px",
+              border: "1px solid #e2e8f0",
+              backgroundColor: "#f8fafc",
+              fontSize: "0.85rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <span>{isExpanded ? "Ocultar políticas" : "Mostrar políticas"}</span>
+            <IconChevronDown
+              size={18}
+              style={{
+                transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.2s ease",
+              }}
+            />
+          </button>
+        </div>
+
         <div className="view-toggle" role="group" aria-label="Cambiar vista">
           <button
             className={`view-btn ${viewMode === "table" ? "is-active" : ""}`}
@@ -269,7 +322,7 @@ export default function PoliciesModule({
         </div>
       </section>
 
-      {(
+      {isExpanded && (
         <>
           {filtered.length === 0 ? (
             <div className="empty-state">

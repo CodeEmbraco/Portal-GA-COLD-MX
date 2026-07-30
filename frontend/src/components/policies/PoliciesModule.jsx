@@ -17,6 +17,7 @@ import PolicyFormModal from "./PolicyFormModal.jsx"
 import ConfirmDialog from "./ConfirmDialog.jsx"
 import PolicyTable from "./PolicyTable.jsx"
 import PolicyCards from "./PolicyCards.jsx"
+import LockToggle from "../LockToggle/LockToggle.jsx"
 import "./policies.css"
 
 export default function PoliciesModule({
@@ -167,6 +168,12 @@ export default function PoliciesModule({
     }
   }
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('userInfo');
+    fetchPolicies();
+    onLogout();
+  };
+
   return (
     <div className="policies">
       {/* Encabezado del módulo */}
@@ -195,9 +202,13 @@ export default function PoliciesModule({
             )}
           </div>
           <div className="dept-section-actions">
-            <button className="btn-lock" onClick={() => requireAuth(() => { })}>
-              <IconLock size={22} />
-            </button>
+            <LockToggle
+              isAuthenticated={isAuthenticated}
+              onLogin={() => {
+                setShowLogin(true);
+              }}
+              onLogout={handleLogout}
+            />
             <button className="btn btn-primary btn-new" onClick={handleCreate}>
               <IconPlus size={18} /> Nueva política
             </button>

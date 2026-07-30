@@ -1,0 +1,46 @@
+.lock-toggle {
+    position: relative;
+    width: 56px;
+    height: 30px;
+    background-color: #cbd5e1;
+    /* Color desactivado (Gris) */
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.25s ease-in-out;
+    outline: none;
+}
+
+/* Estado Activo (Verde o Azul según tu preferencia) */
+.lock-toggle.active {
+    background-color: #22c55e;
+    /* Verde activo tipo iOS/Android */
+}
+
+/* La "bolita" que se desliza */
+.lock-toggle-thumb {
+    width: 24px;
+    height: 24px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #64748b;
+}
+
+/* Desplazamiento de la bolita a la derecha cuando está activo */
+.lock-toggle.active .lock-toggle-thumb {
+    transform: translateX(26px);
+    color: #22c55e;
+}
+
+/* Efecto hover suave */
+.lock-toggle:hover {
+    opacity: 0.95;
+}

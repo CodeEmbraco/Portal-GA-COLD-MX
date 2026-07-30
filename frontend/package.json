@@ -9,6 +9,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.46.0",
     "axios": "^1.18.1",
     "react": "^19",
     "react-dom": "^19"

@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "prisma:generate": "prisma generate",
+    "build": "npm run prisma:generate && tsc",
+    "start": "node dist/src/index.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

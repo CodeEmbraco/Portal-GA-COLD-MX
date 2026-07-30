@@ -17,7 +17,7 @@ export const useAuthenticated = () => {
                 id: response.data.objeto.usuario.id,
                 correo: response.data.objeto.usuario.correo,
                 rol: response.data.objeto.usuario.rol?.[0]?.rol,
-                departamento: response.data.objeto.usuario.departamento?.[0]?.id,
+                departamentoId: response.data.objeto.usuario.departamento?.[0]?.id,
             };
             //Guardamos en sessionStorage
             sessionStorage.setItem('userInfo', JSON.stringify(userInfo));

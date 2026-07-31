@@ -173,6 +173,7 @@ export default function PoliciesModule({
         // formData.append("ruta", data.rawFile.name);
 
         await createFile(formData);
+        fetchPolicies();
       }
 
       setFormState(null);

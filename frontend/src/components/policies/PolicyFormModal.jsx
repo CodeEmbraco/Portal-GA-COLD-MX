@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useMemo } from "react"
 import { IconClose, IconFile } from "../Icons.jsx"
 import { useCatalog } from "../../hooks/useCatalog.js"
 
@@ -18,6 +18,14 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
     nombreArchivo: policy?.nombreArchivo ?? "",
   })
   const [errors, setErrors] = useState({})
+
+  const availableDepartments = useMemo(() => {
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+    // Si el usuario es admin, muestra todas las opciones.
+    if (userInfo.rol === "Admin") return departments
+    // Si no es admin, solo muestra su departamento.
+    return departments.filter((dep) => dep.value === userInfo.departamentoId)
+  }, [departments])
 
   useEffect(() => {
     firstFieldRef.current?.focus()
@@ -107,7 +115,7 @@ export default function PolicyFormModal({ policy, defaultDepartment, onClose, on
                 onChange={(e) => update("departamentoId", e.target.value)}
               >
                 <option value="">Selecciona un departamento…</option>
-                {departments.map((dep) => (
+                {availableDepartments.map((dep) => (
                   <option key={dep.value} value={dep.value}>
                     {dep.label}
                   </option>

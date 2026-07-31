@@ -115,10 +115,6 @@ export default function LoginModal({ onClose, onSuccess }) {
             </p>
           )}
 
-          <p className="login-hint">
-            Credenciales de prueba — usuario: <strong>admin</strong> · contraseña: <strong>123</strong>
-          </p>
-
           <div className="modal-footer">
             <button type="button" className="btn btn-outline" onClick={onClose}>
               Cancelar

@@ -1,0 +1,7 @@
+#vite
+.vs
+.vite
+
+#Node
+node_modules/
+.env*

@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { IconDocument } from "../Icons.jsx"
 import "./fileViewer.css" // Opcional para tus estilos
 
-export default function FileViewerModal({ file, onClose }) {
+export default function FileViewerModal({ file, onClose, onDownload }) {
   // 1. EFECTO: Cerrar el modal al presionar la tecla 'Escape' (limpieza con cleanup)
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -38,15 +38,20 @@ export default function FileViewerModal({ file, onClose }) {
           </div>
           
           <div className="viewer-actions">
-            {file.rawFileObj && (
               <button 
                 type="button" 
                 className="btn btn-primary btn-sm"
-                onClick={() => onDownload(file.rawFileObj)}
+                onClick={() => {
+                if (onDownload && file.rawFileObj) {
+                  onDownload(file.rawFileObj);
+                } else {
+                  console.error("Falta el objeto del archivo o la función onDownload");
+                }
+              }}
               >
                 Descargar
               </button>
-            )}
+            
             <button className="btn-close" onClick={onClose} aria-label="Cerrar">
               ✕
             </button>

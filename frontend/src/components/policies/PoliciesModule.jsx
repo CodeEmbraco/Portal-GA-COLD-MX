@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react"
 import { usePolicies } from "@hooks/usePolicies"
 import { useCatalog } from "@hooks/useCatalog"
 import { useFile } from "@hooks/useFile"
+import FileViewerModal from "./fileViewer.jsx"
 
 import {
   IconPlus,
@@ -52,7 +53,7 @@ export default function PoliciesModule({
 
   //Llamamos los hooks
   const { policies, fetchPolicies, createPolicy, updatePolicy, deletePolicy } = usePolicies();
-  const { createFile, getFilesByPolicy, downloadFile, isDownloading } = useFile();
+  const { createFile, getFilesByPolicy, downloadFile, isDownloading, getFileBlobUrl } = useFile();
   const { catalog: departments = [] } = useCatalog("departamento");
 
   //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
@@ -69,6 +70,27 @@ export default function PoliciesModule({
       if (onLogout) onLogout();
     };
   }, []);
+
+  //control de visualizador
+  const [viewingFile, setViewingFile] = useState(null)
+
+  const handleViewFile = async (archivo, politica) => {
+    if (!archivo) return;
+
+    const blobUrl = await getFileBlobUrl(archivo);
+
+    if (!blobUrl) {
+      alert("No se pudo cargar el archivo para vista previa.");
+      return;
+    }
+
+    setViewingFile({
+      title: `${politica?.titulo || politica?.title || "Política"} - ${archivo.codigo}`,
+      url: blobUrl, 
+      mimeType: "application/pdf",
+      rawFileObj: archivo
+    });
+  };
 
   // Control de modales
   const [showLogin, setShowLogin] = useState(false)
@@ -341,9 +363,9 @@ export default function PoliciesModule({
               </button>
             </div>
           ) : viewMode === "table" ? (
-            <PolicyTable policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} />
+            <PolicyTable policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} onViewFile={handleViewFile}/>
           ) : (
-            <PolicyCards policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} />
+            <PolicyCards policies={filtered} onEdit={handleEdit} onDelete={handleDelete} onDownload={downloadFile} onViewFile={handleViewFile} />
           )}
         </>
       )}
@@ -374,6 +396,14 @@ export default function PoliciesModule({
           message={`¿Seguro que deseas eliminar "${deleteTarget.title}"? Esta acción no se puede deshacer.`}
           onCancel={() => setDeleteTarget(null)}
           onConfirm={confirmDelete}
+        />
+      )}
+
+      {viewingFile && (
+        <FileViewerModal 
+          file={viewingFile} 
+          onClose={() => setViewingFile(null)}
+          onDownload={downloadFile} 
         />
       )}
     </div>

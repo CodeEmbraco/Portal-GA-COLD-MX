@@ -8,7 +8,7 @@ function formatDate(iso) {
 }
 
 // Vista de tabla para listar políticas.
-export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) {
+export default function PolicyTable({ policies, onEdit, onDelete, onDownload, onViewFile}) {
   return (
     <div className="table-wrap">
       <table className="policy-table">
@@ -46,8 +46,8 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload }) 
                       key={archivo.id}
                       type="button"
                       className="file-pill"
-                      onClick={() => onDownload(archivo)}
-                      title={`Descargar: ${archivo.codigo}`}
+                      onClick={() => onViewFile(archivo, p)}
+                      title={`Previsualizar: ${archivo.codigo}`}
                       style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
                     >
                       <IconFile size={15} />

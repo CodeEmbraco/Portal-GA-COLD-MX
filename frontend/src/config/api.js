@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const activeUrl = import.meta.env.LOCAL_DEBUG ? import.meta.env.VITE_API_URL : 'http://localhost:8009';
+const activeUrl = import.meta.env.VITE_LOCAL_DEBUG ? import.meta.env.VITE_API_URL : 'http://localhost:8009';
 
 const api = axios.create({
     baseURL: activeUrl,

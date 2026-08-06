@@ -131,6 +131,27 @@ export const useFile = () => {
         }
     }, []);
 
+    const getFileBlobUrl = useCallback(async (archivo) => {
+        if (!archivo?.ruta) return null;
+
+        try {
+            // Pedimos el archivo al backend exactamente igual que en downloadFile
+            const response = await api.get(`/uploads/${archivo.ruta}`, {
+                responseType: 'blob',
+                headers: {
+                    'Accept': '*/*'
+                }
+            });
+
+            // Creamos un Blob y su URL binaria local temporal
+            const blob = new Blob([response.data], { type: response.headers['content-type'] || 'application/pdf' });
+            return window.URL.createObjectURL(blob);
+        } catch (err) {
+            console.error("Error al obtener la URL del archivo:", err);
+            return null;
+        }
+    }, []);
+
     return {
         files,
         loading,
@@ -140,6 +161,7 @@ export const useFile = () => {
         deleteFile,
         downloadFile,
         isDownloading,
+        getFileBlobUrl
     };
 };
 

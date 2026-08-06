@@ -1,36 +1,96 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { IconDocument } from "../Icons.jsx"
-import "./fileViewer.css" // Opcional para tus estilos
+import "./fileViewer.css"
 
 export default function FileViewerModal({ file, onClose, onDownload }) {
-  // 1. EFECTO: Cerrar el modal al presionar la tecla 'Escape' (limpieza con cleanup)
+  const [isKeyPressed, setIsKeyPressed] = useState(false)
+  const [isMouseInside, setIsMouseInside] = useState(false)
+  const [isViolated, setIsViolated] = useState(false)
+
+  const handleReset = () => {
+    setIsViolated(false)
+    setIsKeyPressed(false)
+    setIsMouseInside(false)
+  }
+
   useEffect(() => {
+    const activeKeys = new Set()
+
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === "Escape") {
+        onClose()
+        return
+      }
+
+      if (isViolated) return
+
+      activeKeys.add(e.code)
+
+      const isKeyA = e.key === "a" || e.key === "A"
+
+      if (!isKeyA || activeKeys.size > 1) {
+        setIsViolated(true)
+      } else {
+        e.preventDefault()
+        setIsKeyPressed(true)
+      }
     }
+
+    const handleKeyUp = (e) => {
+      activeKeys.delete(e.code)
+      if (e.key === "a" || e.key === "A" || activeKeys.size === 0) {
+        setIsKeyPressed(false)
+      }
+    }
+
+    const handleBlur = () => {
+      if (document.activeElement && document.activeElement.tagName === "IFRAME") {
+        setIsViolated(true)
+        window.focus()
+        if (document.activeElement) document.activeElement.blur()
+        return
+      }
+
+      activeKeys.clear()
+      setIsKeyPressed(false)
+      setIsMouseInside(false)
+    }
+
+    const safetyInterval = setInterval(() => {
+      if (document.activeElement && document.activeElement.tagName === "IFRAME") {
+        if (!isViolated) {
+          setIsViolated(true)
+          window.focus()
+          document.activeElement.blur()
+        }
+      }
+    }, 150)
+
     window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
+    window.addEventListener("blur", handleBlur)
 
-    // Función de limpieza (cleanup) al desmontar
     return () => {
-        window.removeEventListener("keydown", handleKeyDown)
-        if (file?.url?.startsWith("blob:")) {
-            window.URL.revokeObjectURL(file.url)
-        }
-        }
-    }, [onClose, file])
+      clearInterval(safetyInterval)
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("keyup", handleKeyUp)
+      window.removeEventListener("blur", handleBlur)
 
-  // Si no hay archivo seleccionado, no renderizamos nada (renderizado condicional)
+      if (file?.url?.startsWith("blob:")) {
+        window.URL.revokeObjectURL(file.url)
+      }
+    }
+  }, [onClose, file, isViolated])
+
   if (!file) return null
 
-  // Supongamos que 'file' tiene { title, url, mimeType }
   const isPdf = file.mimeType?.includes("pdf") || file.url?.endsWith(".pdf")
+  const isDocumentVisible = !isViolated && isKeyPressed && isMouseInside
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {/* e.stopPropagation evita que al hacer clic dentro del contenido se cierre el modal */}
       <div className="viewer-container" onClick={(e) => e.stopPropagation()}>
         
-        {/* Encabezado del visor */}
         <header className="viewer-header">
           <div className="viewer-title">
             <IconDocument size={20} />
@@ -38,45 +98,78 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
           </div>
           
           <div className="viewer-actions">
-              <button 
-                type="button" 
-                className="btn btn-primary btn-sm"
-                onClick={() => {
+            <button 
+              type="button" 
+              className="btn btn-primary btn-sm"
+              onClick={() => {
                 if (onDownload && file.rawFileObj) {
-                  onDownload(file.rawFileObj);
+                  onDownload(file.rawFileObj)
                 } else {
-                  console.error("Falta el objeto del archivo o la función onDownload");
+                  console.error("Falta el objeto del archivo o la función onDownload")
                 }
               }}
-              >
-                Descargar
-              </button>
+            >
+              Descargar
+            </button>
             
             <button className="btn-close" onClick={onClose} aria-label="Cerrar">
               ✕
             </button>
           </div>
         </header>
-
-        {/* Cuerpo del visor con iframe */}
-        <main className="viewer-body">
+        <main 
+          className={`viewer-body ${!isDocumentVisible ? "is-blurred" : ""}`}
+          onMouseEnter={() => !isViolated && setIsMouseInside(true)}
+          onMouseLeave={() => {
+            setIsMouseInside(false)
+            setIsKeyPressed(false)
+          }}
+          onMouseDown={() => {
+            if (!isViolated) setIsViolated(true)
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            if (!isViolated) setIsViolated(true)
+          }}
+        >
+          {/* AVISO 1: Infracción */}
+          {isViolated ? (
+            <div className="protection-overlay">
+              <div className="protection-card error-card">
+                <span className="protection-icon"></span>
+                <h4>Acción no permitida</h4>
+                <p>
+                  Por razones de seguridad, no está permitido hacer clic sobre el documento protegido ni presionar teclas adicionales. Abre un nuevo visor
+                </p>
+              </div>
+            </div>
+          ) : (
+            !isDocumentVisible && (
+              <div className="protection-overlay">
+                <div className="protection-card">
+                  <span className="protection-icon"></span>
+                  <h4>Contenido Protegido</h4>
+                  <p>
+                    Pasa el cursor sobre el área y mantén presionada la tecla <strong>A</strong> para consultar el documento.
+                  </p>
+                </div>
+              </div>
+            )
+          )}
           {isPdf ? (
             <iframe
               src={`${file.url}#toolbar=0`} 
               title={file.title}
               width="100%"
               height="100%"
+              style={{ pointerEvents: !isDocumentVisible ? "none" : "auto" }}
             />
           ) : (
             <div className="viewer-fallback">
               <p>Este tipo de archivo no se puede previsualizar directamente.</p>
-              <a href={file.url} target="_blank" rel="noreferrer" className="btn btn-primary">
-                Abrir en nueva pestaña
-              </a>
             </div>
           )}
         </main>
-
       </div>
     </div>
   )

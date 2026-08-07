@@ -56,6 +56,9 @@ export default function PoliciesModule({
   const { createFile, getFilesByPolicy, downloadFile, isDownloading, getFileBlobUrl } = useFile();
   const { catalog: departments = [] } = useCatalog("departamento");
 
+  //Permisos
+  const puedeCrear = policies.length > 0 ? policies[0].acciones.crear : false;
+
   //El useEffect reacciona cuando hay un cambio en "isAuthenticated".
   //Cuando se monta el componente, trae solamente politicas publicas.
   //Cuando el usuario valida su sesion, se vuelve a ejecutar y trae tambien las politicas privadas si es que aplica.
@@ -88,7 +91,8 @@ export default function PoliciesModule({
       title: `${politica?.titulo || politica?.title || "Política"} - ${archivo.codigo}`,
       url: blobUrl, 
       mimeType: "application/pdf",
-      rawFileObj: archivo
+      rawFileObj: archivo,
+      politicaObj: politica
     });
   };
 
@@ -253,9 +257,11 @@ export default function PoliciesModule({
               }}
               onLogout={handleLogout}
             />
+            {puedeCrear && (
             <button className="btn btn-primary btn-new" onClick={handleCreate}>
               <IconPlus size={18} /> Nueva política
             </button>
+            )}
           </div>
         </div>
         <div className="dept-grid">

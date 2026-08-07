@@ -7,13 +7,13 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
   const [isMouseInside, setIsMouseInside] = useState(false)
   const [isViolated, setIsViolated] = useState(false)
 
-  const handleReset = () => {
-    setIsViolated(false)
-    setIsKeyPressed(false)
-    setIsMouseInside(false)
-  }
+  const puedeDescargar = file?.politicaObj?.acciones?.descargar ?? true;
+  const esVisorLibre = file?.politicaObj?.acciones?.visor ?? false;
 
   useEffect(() => {
+
+    if (esVisorLibre) return;
+
     const activeKeys = new Set()
 
     const handleKeyDown = (e) => {
@@ -85,7 +85,7 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
   if (!file) return null
 
   const isPdf = file.mimeType?.includes("pdf") || file.url?.endsWith(".pdf")
-  const isDocumentVisible = !isViolated && isKeyPressed && isMouseInside
+  const isDocumentVisible = esVisorLibre || (!isViolated && isKeyPressed && isMouseInside)
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -98,6 +98,7 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
           </div>
           
           <div className="viewer-actions">
+            {puedeDescargar && (
             <button 
               type="button" 
               className="btn btn-primary btn-sm"
@@ -111,6 +112,7 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
             >
               Descargar
             </button>
+            )}
             
             <button className="btn-close" onClick={onClose} aria-label="Cerrar">
               ✕
@@ -119,43 +121,50 @@ export default function FileViewerModal({ file, onClose, onDownload }) {
         </header>
         <main 
           className={`viewer-body ${!isDocumentVisible ? "is-blurred" : ""}`}
-          onMouseEnter={() => !isViolated && setIsMouseInside(true)}
+          onMouseEnter={() => ! esVisorLibre && !isViolated && setIsMouseInside(true)}
           onMouseLeave={() => {
-            setIsMouseInside(false)
-            setIsKeyPressed(false)
+            if (!esVisorLibre) {
+              setIsMouseInside(false)
+              setIsKeyPressed(false)
+            }
           }}
           onMouseDown={() => {
-            if (!isViolated) setIsViolated(true)
+            if (!esVisorLibre && !isViolated) setIsViolated(true)
           }}
           onContextMenu={(e) => {
-            e.preventDefault()
-            if (!isViolated) setIsViolated(true)
+            if (!esVisorLibre) {
+              e.preventDefault()
+              if (!isViolated) setIsViolated(true)
+            }
           }}
         >
-          {/* AVISO 1: Infracción */}
-          {isViolated ? (
-            <div className="protection-overlay">
-              <div className="protection-card error-card">
-                <span className="protection-icon"></span>
-                <h4>Acción no permitida</h4>
-                <p>
-                  Por razones de seguridad, no está permitido hacer clic sobre el documento protegido ni presionar teclas adicionales. Abre un nuevo visor
-                </p>
-              </div>
-            </div>
-          ) : (
-            !isDocumentVisible && (
+          {!esVisorLibre && (
+            <>
+            {isViolated ? (
               <div className="protection-overlay">
-                <div className="protection-card">
+                <div className="protection-card error-card">
                   <span className="protection-icon"></span>
-                  <h4>Contenido Protegido</h4>
+                  <h4>Acción no permitida</h4>
                   <p>
-                    Pasa el cursor sobre el área y mantén presionada la tecla <strong>A</strong> para consultar el documento.
+                    Por razones de seguridad, no está permitido hacer clic sobre el documento protegido ni presionar teclas adicionales. Abre un nuevo visor
                   </p>
                 </div>
               </div>
-            )
-          )}
+            ) : (
+              !isDocumentVisible && (
+                <div className="protection-overlay">
+                  <div className="protection-card">
+                    <span className="protection-icon"></span>
+                    <h4>Contenido Protegido</h4>
+                    <p>
+                      Pasa el cursor sobre el área y mantén presionada la tecla <strong>A</strong> para consultar el documento.
+                    </p>
+                  </div>
+                </div>
+              )
+            )}
+          </>
+        )}
           {isPdf ? (
             <iframe
               src={`${file.url}#toolbar=0`} 

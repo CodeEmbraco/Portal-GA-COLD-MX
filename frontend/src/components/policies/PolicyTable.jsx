@@ -26,7 +26,9 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, on
           </tr>
         </thead>
         <tbody>
-          {policies.map((p) => (
+          {policies.map((p) => {
+            const acciones = p.acciones 
+            return(
             <tr key={p.id}>
               <td className="cell-title">{p.titulo}</td>
               <td>
@@ -60,6 +62,7 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, on
               </td>
               <td className="col-actions">
                 <div className="row-actions">
+                  {acciones.editar && (
                   <button
                     className="action-btn"
                     onClick={() => onEdit(p)}
@@ -68,6 +71,9 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, on
                   >
                     <IconEdit size={17} />
                   </button>
+                  )}
+
+                  {acciones.eliminar && (
                   <button
                     className="action-btn is-danger"
                     onClick={() => onDelete(p)}
@@ -76,10 +82,12 @@ export default function PolicyTable({ policies, onEdit, onDelete, onDownload, on
                   >
                     <IconTrash size={17} />
                   </button>
+                  )}
                 </div>
               </td>
             </tr>
-          ))}
+            )
+          })}
         </tbody>
       </table>
     </div>
